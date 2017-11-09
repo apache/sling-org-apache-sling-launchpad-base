@@ -116,20 +116,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
-                    <!-- Launcher Felix HttpService Bridge -->
-                    <execution>
-                        <id>copy-felix-httpservice-bridge</id>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeArtifactIds>org.apache.felix.http.bridge</includeArtifactIds>
-                            <excludeTransitive>true</excludeTransitive>
-                            <outputDirectory>
-                                ${project.build.directory}/felix-bridge
-                            </outputDirectory>
-                        </configuration>
-                    </execution>
                     <!-- Embed code from osgi.commons -->
                     <execution>
                         <id>extract-sling-commons-osgi</id>
@@ -225,12 +211,6 @@
                                     <filtering>false</filtering>
                                     <directory>${project.build.directory}/maven-shared-archive-resources</directory>
                                 </webResource>
-                                <!-- ensure the Felix HttpService bundle is in the war -->
-                                <webResource>
-                                    <targetPath>/WEB-INF/resources/bundles/1</targetPath>
-                                    <filtering>false</filtering>
-                                    <directory>${project.build.directory}/felix-bridge</directory>
-                                </webResource>
                             </webResources>
                         </configuration>
                     </execution>
@@ -272,12 +252,6 @@
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.http.proxy</artifactId>
             <version>3.0.2</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.http.bridge</artifactId>
-            <version>3.0.18</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
