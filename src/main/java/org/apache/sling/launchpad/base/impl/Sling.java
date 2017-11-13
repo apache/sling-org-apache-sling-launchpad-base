@@ -555,7 +555,14 @@ public class Sling {
             }
         }
 
-        return runtimeProps;
+
+        Map<String, String> result = new HashMap<>();
+
+        for (Entry<String, String> entry : runtimeProps.entrySet()) {
+            result.put(entry.getKey(), entry.getValue().replace("{dollar}", "$"));
+        }
+
+        return result;
     }
 
     /**
