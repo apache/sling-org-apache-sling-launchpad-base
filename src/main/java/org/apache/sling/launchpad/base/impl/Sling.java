@@ -445,9 +445,6 @@ public class Sling {
                     runtimeProps.put(name, sysProp);
                 }
             }
-            if (System.getProperty("org.osgi.framework.system.packages.extra") != null) {
-                runtimeProps.put("org.osgi.framework.system.packages.extra", System.getProperty("org.osgi.framework.system.packages.extra"));
-            }
         }
 
         // resolve inclusions again
