@@ -42,9 +42,10 @@
     </description>
 
     <scm>
-        <connection>scm:svn:http://svn.apache.org/repos/asf/sling/trunk/launchpad/base</connection>
-        <developerConnection>scm:svn:https://svn.apache.org/repos/asf/sling/trunk/launchpad/base</developerConnection>
-        <url>http://svn.apache.org/viewvc/sling/trunk/launchpad/base</url>
+        <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-launchpad-base.git</connection>
+        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-launchpad-base.git</developerConnection>
+        <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-launchpad-base.git</url>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
