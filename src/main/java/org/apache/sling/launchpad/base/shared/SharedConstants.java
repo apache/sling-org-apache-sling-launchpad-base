@@ -132,7 +132,7 @@ public interface SharedConstants {
      * The name of the configuration property defining the startlevel
      * for installs and updates. The framework starts with this start level
      * and the startup manager increases the start level one by one until
-     * thetarget start level is reached ({@value #SLING_INSTALL_TARGETSTARTLEVEL}).
+     * the target start level is reached ({@value #SLING_INSTALL_TARGETSTARTLEVEL}).
      * This level is only used if {@link #SLING_INSTALL_INCREMENTAL_START} is
      * enabled. Default value is 10.
      * @since 2.4.0
