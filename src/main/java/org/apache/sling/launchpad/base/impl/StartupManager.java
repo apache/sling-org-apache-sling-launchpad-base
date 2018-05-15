@@ -80,6 +80,14 @@ public class StartupManager {
             this.logger.log(Logger.LOG_INFO, "Detected startup mode. Starting in mode " + this.mode);
         }
 
+        // populate the sling target start level from the framework one, if not set,
+        // otherwise overwrite the framework one
+        if (null == properties.get(SharedConstants.SLING_INSTALL_TARGETSTARTLEVEL)) {
+            properties.put(SharedConstants.SLING_INSTALL_TARGETSTARTLEVEL, properties.get(Constants.FRAMEWORK_BEGINNING_STARTLEVEL));
+        } else {
+            properties.put(Constants.FRAMEWORK_BEGINNING_STARTLEVEL, properties.get(SharedConstants.SLING_INSTALL_TARGETSTARTLEVEL));
+        }
+
         this.targetStartLevel = Long.valueOf(properties.get(Constants.FRAMEWORK_BEGINNING_STARTLEVEL));
 
         this.incrementalStartupEnabled = Boolean.valueOf(properties.get(SharedConstants.SLING_INSTALL_INCREMENTAL_START));
