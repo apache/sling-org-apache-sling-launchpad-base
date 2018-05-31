@@ -82,7 +82,7 @@ public class StartupManager {
 
         // populate the sling target start level from the framework one, if not set,
         // otherwise overwrite the framework one
-        if (properties.containsKey(SharedConstants.SLING_INSTALL_TARGETSTARTLEVEL)) {
+        if (!properties.containsKey(SharedConstants.SLING_INSTALL_TARGETSTARTLEVEL)) {
             properties.put(SharedConstants.SLING_INSTALL_TARGETSTARTLEVEL, properties.get(Constants.FRAMEWORK_BEGINNING_STARTLEVEL));
         } else {
             properties.put(Constants.FRAMEWORK_BEGINNING_STARTLEVEL, properties.get(SharedConstants.SLING_INSTALL_TARGETSTARTLEVEL));
