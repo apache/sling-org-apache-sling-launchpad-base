@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.felix.framework.Logger;
-import org.apache.felix.framework.util.VersionRange;
+import org.osgi.framework.VersionRange;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -56,7 +56,7 @@ class UninstallBundleCommand implements Command {
         if (!versionRangeStr.contains(",")) {
             versionRangeStr = "[" + versionRangeStr + "," + versionRangeStr + "]";
         }
-        this.versionRange = VersionRange.parse(versionRangeStr);
+        this.versionRange = new VersionRange(versionRangeStr);
     }
 
     /**
@@ -97,7 +97,7 @@ class UninstallBundleCommand implements Command {
         boolean refreshSystemBundle = false;
         for(final Bundle b : ctx.getBundles()) {
             if (b.getSymbolicName().equals(bundleSymbolicName)) {
-                if (versionRange == null || versionRange.isInRange(b.getVersion())) {
+                if (versionRange == null || versionRange.includes(b.getVersion())) {
                     logger.log(Logger.LOG_INFO,
                             this + ": uninstalling bundle version " + b.getVersion());
                     final String fragmentHostHeader = getFragmentHostHeader(b);
