@@ -31,6 +31,7 @@ import org.apache.sling.launchpad.base.shared.Loader;
 import org.apache.sling.launchpad.base.shared.Notifiable;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
+import org.osgi.framework.FrameworkEvent;
 
 
 public class SlingFelix extends Felix {
@@ -164,9 +165,11 @@ public class SlingFelix extends Felix {
 
         @Override
         public void run() {
-
+            boolean restart = this.restart;
             try {
-                SlingFelix.this.waitForStop(0);
+                if (SlingFelix.this.waitForStop(0).getType() == FrameworkEvent.STOPPED_SYSTEM_REFRESHED) {
+                    restart = true;
+                }
             } catch (InterruptedException ie) {
                 Thread.currentThread().interrupt();
             }
