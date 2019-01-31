@@ -32,7 +32,7 @@
        This version is a concatenation of the framework version and a version for the launchpad base itself.
        For a release only the qualifier (launchpad base version) is increased.
      -->
-    <version>6.0.2-2.6.33-SNAPSHOT</version>
+    <version>6.0.2-2.6.34</version>
     <packaging>bundle</packaging>
 
     <name>Apache Sling Launchpad Base</name>
@@ -45,7 +45,7 @@
         <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-launchpad-base.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-launchpad-base.git</developerConnection>
         <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-launchpad-base.git</url>
-        <tag>HEAD</tag>
+        <tag>org.apache.sling.launchpad.base-6.0.2-2.6.34</tag>
     </scm>
 
     <properties>
