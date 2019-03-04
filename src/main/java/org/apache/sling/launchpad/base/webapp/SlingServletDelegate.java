@@ -320,6 +320,20 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
 
     // ---------- Configuration Loading ----------------------------------------
 
+    private String calculateServletPackages(final String servletVersion, final int majorVersion) {
+        final String servlet2Packages = "javax.servlet;javax.servlet.http;javax.servlet.resources";
+        final String servlet3Packages = servlet2Packages + ";javax.servlet.annotation;javax.servlet.descriptor";
+        if (majorVersion < 3) {
+            return servlet2Packages.concat(";version=").concat(servletVersion);
+        } else if (majorVersion < 4) {
+            return servlet2Packages.concat(";version=2.6,").concat(servlet3Packages).concat(";version=")
+                    .concat(servletVersion);
+        }
+        return servlet2Packages.concat(";version=2.6,").concat(servlet3Packages).concat(";version=3.1,")
+                .concat(servlet3Packages).concat(";version=").concat(servletVersion);
+
+    }
+
     /**
      * Loads the configuration properties in the configuration property file
      * associated with the framework installation; these properties are
@@ -343,17 +357,12 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
         // Try to load it from one of these places.
         Map<String, String> props = new HashMap<String, String>();
 
-        // The following property must start with a comma!
         final String servletVersion = getServletContext().getMajorVersion() + "." +
                                       getServletContext().getMinorVersion();
-        String packages = ",javax.servlet;javax.servlet.http;javax.servlet.resources";
-        if ( getServletContext().getMajorVersion() >= 3 ) {
-            // servlet 3.x adds new packages and we should export as 2.6 and 3.x
-            packages = packages + "; version=2.6" + packages + ";javax.servlet.annotation;javax.servlet.descriptor";
-        }
+        // This property must start with a comma!
         props.put(
                  Sling.PROP_SYSTEM_PACKAGES,
-                 packages + "; version=" + servletVersion);
+                ",".concat(calculateServletPackages(servletVersion, getServletContext().getMajorVersion())));
         // extra capabilities
         final String servletCaps = "osgi.contract;osgi.contract=JavaServlet;version:Version=\" " + servletVersion + "\";" +
                         "uses:=\"javax.servlet,javax.servlet.http,javax.servlet.descriptor,javax.servlet.annotation\"";
