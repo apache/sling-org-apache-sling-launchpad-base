@@ -237,7 +237,7 @@ public class MainDelegate implements Launcher {
                 String value = arg.getValue();
                 switch (arg.getKey().charAt(0)) {
                     case 'l':
-                        if (value == arg.getKey()) {
+                        if (value.equals(arg.getKey())) {
                             terminate("Missing log level value", 1);
                             continue;
                         }
@@ -245,7 +245,7 @@ public class MainDelegate implements Launcher {
                         break;
 
                     case 'f':
-                        if (value == arg.getKey()) {
+                        if (value.equals(arg.getKey())) {
                             terminate("Missing log file value", 1);
                             continue;
                         } else if ("-".equals(value)) {
@@ -255,7 +255,7 @@ public class MainDelegate implements Launcher {
                         break;
 
                     case 'c':
-                        if (value == arg.getKey()) {
+                        if (value.equals(arg.getKey())) {
                             terminate("Missing directory value", 1);
                             continue;
                         }
@@ -263,7 +263,7 @@ public class MainDelegate implements Launcher {
                         break;
 
                     case 'p':
-                        if (value == arg.getKey()) {
+                        if (value.equals(arg.getKey())) {
                             terminate("Missing port value", 1);
                             continue;
                         }
@@ -277,7 +277,7 @@ public class MainDelegate implements Launcher {
                         break;
 
                     case 'a':
-                        if (value == arg.getKey()) {
+                        if (value.equals(arg.getKey())) {
                             terminate("Missing address value", 1);
                             continue;
                         }
