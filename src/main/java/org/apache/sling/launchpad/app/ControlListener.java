@@ -218,8 +218,7 @@ class ControlListener implements Runnable {
                     String commandLine = null;
                     try {
                         commandLine = readLine(s);
-                    } catch (SocketException e) {
-                        Main.info("catch Exception ", e);
+                    } catch (SocketException ignore) {
                         continue;
                     }
 
