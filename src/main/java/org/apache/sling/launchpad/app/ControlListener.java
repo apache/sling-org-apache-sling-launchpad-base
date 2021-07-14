@@ -219,6 +219,7 @@ class ControlListener implements Runnable {
                     try {
                         commandLine = readLine(s);
                     } catch (SocketException ignore) {
+                        Main.error("Failure in accessing a socket", ignore);
                         continue;
                     }
 
