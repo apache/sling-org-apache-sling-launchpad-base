@@ -37,6 +37,7 @@ import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -214,7 +215,14 @@ class ControlListener implements Runnable {
                 }
 
                 try {
-                    final String commandLine = readLine(s);
+                    String commandLine = null;
+                    try {
+                        commandLine = readLine(s);
+                    } catch (SocketException ignore) {
+                        Main.error("Failure in accessing a socket", ignore);
+                        continue;
+                    }
+
                     if (commandLine == null) {
                         final String msg = "ERR: missing command";
                         writeLine(s, msg);
