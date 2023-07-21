@@ -78,7 +78,7 @@ public interface SharedConstants {
 
     /**
      * True or false value which controls whether sling will load bundles which
-     * are contained in the resources/# path locations in the sling jar or war <br/>
+     * are contained in the resources/# path locations in the sling jar or war.
      * The default is to unpack the jars and deploy them to the startup folder
      * in sling home
      */
@@ -86,7 +86,7 @@ public interface SharedConstants {
 
     /**
      * True or false value which controls whether sling will load bundles which
-     * are contained in the resources/# path locations in the sling jar or war <br/>
+     * are contained in the resources/# path locations in the sling jar or war
      * regardless of the modification time of the Launchpad JAR.
      */
     public static final String FORCE_PACKAGE_BUNDLE_LOADING = "org.apache.sling.launchpad.force.package.bundle.loading";
@@ -144,7 +144,7 @@ public interface SharedConstants {
      * The framework starts with the startlevel of {@value #SLING_INSTALL_STARTLEVEL}
      * and the stops when it reaches this level
      * Default value is the value of the osgi initial framework start level
-     * @see {@link #SLING_INSTALL_STARTLEVEL}
+     * @see #SLING_INSTALL_STARTLEVEL
      */
     public static final String SLING_INSTALL_TARGETSTARTLEVEL = "sling.framework.install.targetstartlevel";
 }

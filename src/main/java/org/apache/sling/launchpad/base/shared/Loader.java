@@ -155,6 +155,7 @@ public class Loader {
      * sling home directory. If the existing file is is a more recent bundle
      * version than the supplied launcher JAR file, it is is not replaced.
      *
+     * @param launcherJar The URL to the launcher JAR
      * @return <code>true</code> if the launcher JAR file has been installed or
      *         updated, <code>false</code> otherwise.
      * @throws IOException If an error occurrs transferring the contents
@@ -268,6 +269,8 @@ public class Loader {
      * contents of the file with the contents of the input stream. When this
      * method returns, the input stream is guaranteed to be closed.
      *
+     * @param ins The input stream to spool
+     * @param destFile The file to spool the input stream contents to
      * @throws IOException If an error occurrs reading or writing the input
      *             stream contents.
      */
@@ -405,7 +408,11 @@ public class Loader {
         }
     }
 
-    /** Meant to be overridden to display or log info */
+    /** 
+     * Meant to be overridden to display or log info
+     *
+     * @param msg The message to display or log
+     */
     protected void info(String msg) {
     }
 

@@ -44,7 +44,7 @@ public final class Util {
     /**
      * This method performs property variable substitution on the specified
      * value. If the specified value contains the syntax
-     * <tt>${&lt;prop-name&gt;}</tt>, where <tt>&lt;prop-name&gt;</tt>
+     * <b>${&lt;prop-name&gt;}</b>, where <b>&lt;prop-name&gt;</b>
      * refers to either a configuration property or a system property, then the
      * corresponding property value is substituted for the variable placeholder.
      * Multiple variable placeholders may exist in the specified value as well

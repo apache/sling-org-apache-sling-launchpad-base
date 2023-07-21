@@ -92,7 +92,7 @@ public class SlingServlet extends GenericServlet implements Notifiable {
     private Servlet sling;
 
     /**
-     * Field managed by the {@link #startSling(String)} method to indicate
+     * Field managed by the {@link #startSling(ServletRequest)} method to indicate
      * whether Sling is in the process of being started.
      */
     private Thread startingSling;

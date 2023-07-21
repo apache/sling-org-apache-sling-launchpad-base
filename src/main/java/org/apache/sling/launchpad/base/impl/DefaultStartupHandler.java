@@ -114,6 +114,7 @@ public class DefaultStartupHandler
      * @param context Bundle context
      * @param logger  Logger
      * @param manager The startup manager
+     * @param startedAt The started time
      */
     public DefaultStartupHandler(final BundleContext context,
             final Logger logger,

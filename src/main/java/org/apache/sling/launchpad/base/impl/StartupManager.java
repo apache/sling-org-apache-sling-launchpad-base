@@ -108,6 +108,7 @@ public class StartupManager {
 
     /**
      * Is the incremental startup enabled?
+     * @return {@code true} if incremental startup is enabled.
      */
     public boolean isIncrementalStartupEnabled() {
         return this.incrementalStartupEnabled;

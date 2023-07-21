@@ -222,8 +222,8 @@ public class Main {
      * the communication with a running Sling instance. To setup this
      * communication the configuration properties supplied to the constructor
      * are evaluated as follows:
-     * <p>
      * <table>
+     * <caption>Control Properties</caption>
      * <tr>
      * <td><code>{@value #PROP_CONTROL_SOCKET}</code></td>
      * <td>Specifies the socket to use for the control connection. This
@@ -238,19 +238,15 @@ public class Main {
      * <td><code>{@value #PROP_CONTROL_ACTION}</code></td>
      * <td>The actual action to execute:
      * <ul>
-     * <b>start</b> -- Start the listener on the configured socket and expect
+     * <li><b>start</b> -- Start the listener on the configured socket and expect
      * commands there. This action is useful only when launching the Sling
-     * application since this action helps manage a running system.
-     * </ul>
-     * <ul>
-     * <b>stop</b> -- Connects to the listener running on the configured socket
+     * application since this action helps manage a running system.</li>
+     * <li><b>stop</b> -- Connects to the listener running on the configured socket
      * and send the command to terminate the Sling Application. If this command
-     * is used, it is expected the Sling Application will not start.
-     * </ul>
-     * <ul>
-     * <b>status</b> -- Connects to the listener running on the configured
+     * is used, it is expected the Sling Application will not start.</li>
+     * <li><b>status</b> -- Connects to the listener running on the configured
      * socket and query about its status. If this command is used, it is
-     * expected the Sling Application will not start.
+     * expected the Sling Application will not start.</li>
      * </ul>
      * </td>
      * </tr>
@@ -530,6 +526,7 @@ public class Main {
 
     /**
      * Return the absolute path to sling home
+     * @return The path to sling home
      */
     public String getSlingHome() {
         return this.slingHome;

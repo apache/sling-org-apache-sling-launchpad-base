@@ -84,6 +84,8 @@ public class DirectoryUtil {
 
     /**
      * Return the config dir.
+     * @param properties The properties.
+     * @return The config dir.
      */
     public static File getConfigDir(final Map<String, String> properties) {
         return new File(getHomeDir(properties), PATH_CONF);
@@ -91,6 +93,8 @@ public class DirectoryUtil {
 
     /**
      * Return the startup dir.
+     * @param properties The properties.
+     * @return The startup dir.
      */
     public static File getStartupDir(final Map<String, String> properties) {
         return new File(getHomeDir(properties), PATH_STARTUP);

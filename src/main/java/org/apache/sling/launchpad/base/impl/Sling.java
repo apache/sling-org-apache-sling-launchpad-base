@@ -83,7 +83,6 @@ import org.osgi.service.url.URLStreamHandlerService;
  * <code>${inner}</code> and then resolving the property whose name is the
  * catenation of <code>outer-</code> and the result of resolving
  * <code>${inner}</code>.
- * <p>
  */
 public class Sling {
 
@@ -181,7 +180,10 @@ public class Sling {
      * properties, starting the OSGi framework (Apache Felix) and exposing the
      * system bundle context and the <code>Felix</code> instance as servlet
      * context attributes.
-     *
+     * @param notifiable The notifiable
+     * @param logger The logger
+     * @param resourceProvider The resource provider
+     * @param propOverwrite The properties to overwrite
      * @throws BundleException if the framework cannot be initialized.
      */
     public Sling(final Notifiable notifiable,
@@ -692,6 +694,8 @@ public class Sling {
      * framework launched by this servlet. This method only returns a non-<code>null</code>
      * object after the system bundle of the framework has been started and
      * before it is being stopped.
+     *
+     * @return The <code>BundleContext</code> of the system bundle
      */
     public final BundleContext getBundleContext() {
         return this.framework.getBundleContext();

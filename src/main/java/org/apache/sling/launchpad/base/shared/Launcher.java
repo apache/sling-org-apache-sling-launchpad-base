@@ -31,21 +31,25 @@ public interface Launcher {
      * Sets the sling.home to be used for starting the framework. This method
      * must be called with a non-<code>null</code> argument before trying to
      * start the framework.
+     * @param slingHome The sling.home directory
      */
     public void setSlingHome(String slingHome);
 
     /**
      * The {@link Notifiable} to notify on framework stop or update
+     * @param notifiable The notifiable
      */
     public void setNotifiable(Notifiable notifiable);
 
     /**
      * The commandline provided from the standalone launch case.
+     * @param args The commandline
      */
     public void setCommandLine(Map<String, String> args);
 
     /**
      * Starts the framework and returns <code>true</code> if successfull.
+     * @return <code>true</code> if the framework has been started successfully
      */
     public boolean start();
 

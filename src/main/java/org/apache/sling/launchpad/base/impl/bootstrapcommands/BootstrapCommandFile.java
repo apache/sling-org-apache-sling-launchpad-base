@@ -46,14 +46,22 @@ public class BootstrapCommandFile {
         commandPrototypes.add(new UninstallBundleCommand());
     }
 
-    /** Will load our commands from specified file, if found */
+    /** 
+     * Will load our commands from specified file, if found 
+     * @param logger Logger to use
+     * @param cmdFile File to load commands from, or null
+     */
     public BootstrapCommandFile(Logger logger, File cmdFile) {
         this.logger = logger;
         this.commandFile = cmdFile;
     }
 
-    /** True if we have a command file that needs to be executed, based on its
-     *  file timestamp and stored timstamp
+    /** 
+     * True if we have a command file that needs to be executed, based on its
+     * file timestamp and stored timstamp
+     * @param ctx BundleContext to use
+     * @return True if we have a command file that needs to be executed
+     * 
      */
     boolean anythingToExecute(BundleContext ctx) {
         boolean result = false;
@@ -82,7 +90,9 @@ public class BootstrapCommandFile {
 
     /**
      * Execute commands if needed, and store execution timestamp
+     * @param ctx BundleContext to use
      * @return If system bundle needs a restart.
+     * @throws IOException If an error occurs
      */
     public boolean execute(BundleContext ctx) throws IOException {
         boolean needsRestart = false;

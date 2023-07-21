@@ -128,7 +128,7 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
 
     /**
      * Flag set by the {@link #destroy()} method to indicate the servlet has
-     * been destroyed. This flag is used by the {@link #startSling(String)}
+     * been destroyed. This flag is used by the {@link #init()}
      * method to check whether the SlingServletDelegate has been destroyed while Sling
      * was starting up.
      */
@@ -141,13 +141,7 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
     private Sling sling;
 
     /**
-     * The map of delegatee servlets to which requests are delegated. This map
-     * is managed through the
-     * {@link #serviceChanged(ServiceEvent) service listener} based on servlets
-     * registered.
-     *
-     * @see #getDelegatee()
-     * @see #ungetDelegatee(Object)
+     * The delegatee servlets to which requests are delegated.
      */
     private Servlet delegatee;
 
