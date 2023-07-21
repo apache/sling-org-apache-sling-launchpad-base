@@ -23,7 +23,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Map;
 
 import org.apache.felix.framework.Logger;
@@ -183,20 +182,15 @@ public class StartupManager {
     long getTimeStampOfClass(final Class<?> clazz, final long selfStamp) {
         long timeStamp = selfStamp;
         final ClassLoader loader = clazz.getClassLoader();
-        if (loader instanceof URLClassLoader) {
-            @SuppressWarnings("resource")
-            final URLClassLoader urlLoader = (URLClassLoader) loader;
-            final URL[] urls = urlLoader.getURLs();
-            if (urls.length > 0) {
-                final URL url = urls[0];
-                try {
-                    final long stamp = urls[0].openConnection().getLastModified();
-                    if ( stamp > selfStamp ) {
-                        logger.log(Logger.LOG_INFO, String.format("Newer timestamp for %s from %s : %s", clazz.getName(), url, selfStamp));
-                        timeStamp = stamp;
-                    }
-                } catch (final IOException ignore) {}
-            }
+        final URL url = loader.getResource(clazz.getName().replace('.', '/') + ".class");
+        if (url != null) {
+            try {
+                final long stamp = url.openConnection().getLastModified();
+                if ( stamp > selfStamp ) {
+                    logger.log(Logger.LOG_INFO, String.format("Newer timestamp for %s from %s : %s", clazz.getName(), url, selfStamp));
+                    timeStamp = stamp;
+                }
+            } catch (final IOException ignore) {}
         }
         return timeStamp;
     }

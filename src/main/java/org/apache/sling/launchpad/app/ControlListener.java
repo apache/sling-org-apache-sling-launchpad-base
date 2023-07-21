@@ -565,7 +565,7 @@ class ControlListener implements Runnable {
         return result;
     }
 
-    private static String generateKey() {
+    public static String generateKey() {
          return new BigInteger(165, new SecureRandom()).toString(32);
     }
 

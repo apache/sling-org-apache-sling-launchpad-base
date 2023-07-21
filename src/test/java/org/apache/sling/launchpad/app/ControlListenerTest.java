@@ -32,7 +32,6 @@ import org.apache.sling.launchpad.base.shared.SharedConstants;
 import org.junit.Assert;
 
 import junit.framework.TestCase;
-import junitx.util.PrivateAccessor;
 
 public class ControlListenerTest extends TestCase {
 
@@ -344,10 +343,7 @@ public class ControlListenerTest extends TestCase {
 
     public void test_generateKey() throws Throwable {
         Pattern pattern = Pattern.compile("([a-zA-Z0-9-_=]+)");
-        MyMain main = new MyMain(SLING1);
-        ControlListener cl = new ControlListener(main, null);
-
-        String secretkey = (String) PrivateAccessor.invoke(cl, "generateKey", new Class[] {}, new Object[] {});
+        String secretkey = ControlListener.generateKey();
         Assert.assertTrue(secretkey.length() >= 32);
         Matcher matcher = pattern.matcher(secretkey);
         if (!matcher.matches()) {

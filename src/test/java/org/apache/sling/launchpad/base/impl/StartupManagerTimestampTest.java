@@ -55,7 +55,7 @@ public class StartupManagerTimestampTest {
     @Test
     public void testClassTimestamp() {
         final int defaultValue = Integer.MIN_VALUE;
-        final long ts = startupManager.getTimeStampOfClass(getClass(), defaultValue);
+        final long ts = startupManager.getTimeStampOfClass(StartupManager.class, defaultValue);
         assertTrue("Expecting non-default timestamp, got " + ts, ts > defaultValue);
     }
 }

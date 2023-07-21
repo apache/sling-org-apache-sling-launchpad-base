@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.felix.framework.Felix;
 import org.apache.sling.launchpad.base.shared.Loader;

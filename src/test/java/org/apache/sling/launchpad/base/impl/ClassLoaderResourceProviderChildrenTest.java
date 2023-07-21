@@ -38,7 +38,6 @@ import java.util.jar.JarFile;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 public class ClassLoaderResourceProviderChildrenTest {
@@ -78,7 +77,7 @@ public class ClassLoaderResourceProviderChildrenTest {
             entries.add(new JarEntry(path));
         }
         
-        when(cl.getResource(Matchers.contains("install"))).thenReturn(url);
+        when(cl.getResource(Mockito.contains("install"))).thenReturn(url);
         when(conn.getJarFile()).thenReturn(f);
         when(f.entries()).thenReturn(entries.elements());
         

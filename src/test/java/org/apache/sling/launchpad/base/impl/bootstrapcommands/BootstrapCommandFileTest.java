@@ -32,24 +32,18 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.apache.felix.framework.Logger;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.integration.junit4.JMock;
-import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.Version;
 
-@RunWith(JMock.class)
 public class BootstrapCommandFileTest {
     private final Logger logger = new Logger();
     private final File nonExistentFile = new File("/nonexistent." + System.currentTimeMillis());
-    final Mockery mockery = new JUnit4Mockery();
     private File dataFile;
     private File cmdFile;
     private BundleContext bundleContext;
@@ -58,28 +52,17 @@ public class BootstrapCommandFileTest {
     public void setUp() throws IOException,BundleException {
         dataFile = File.createTempFile(getClass().getSimpleName(), "txt");
 
-        final Bundle b1 = mockery.mock(Bundle.class);
-        mockery.checking(new Expectations() {{
-            allowing(b1).getSymbolicName();
-            will(returnValue("somebundle"));
-            allowing(b1).getHeaders();
-            will(returnValue(new Hashtable<String, String>()));
-            allowing(b1).getVersion();
-            will(returnValue(new Version("1.0.0")));
-            allowing(b1).uninstall();
-        }});
+        final Bundle b1 = Mockito.mock(Bundle.class);
+        Mockito.when(b1.getSymbolicName()).thenReturn("somebundle");
+        Mockito.when(b1.getHeaders()).thenReturn(new Hashtable<String, String>());
+        Mockito.when(b1.getVersion()).thenReturn(new Version("1.0.0"));
+        
         final Bundle [] bundles = { b1 };
 
-
-        bundleContext = mockery.mock(BundleContext.class);
-        mockery.checking(new Expectations() {{
-            allowing(bundleContext).getDataFile(with(any(String.class)));
-            will(returnValue(dataFile));
-            allowing(bundleContext).getBundles();
-            will(returnValue(bundles));
-            allowing(bundleContext).getServiceReference(with(any(String.class)));
-            will(returnValue(null));
-        }});
+        bundleContext = Mockito.mock(BundleContext.class);
+        Mockito.when(bundleContext.getDataFile(Mockito.anyString())).thenReturn(dataFile);
+        Mockito.when(bundleContext.getBundles()).thenReturn(bundles);
+        Mockito.when(bundleContext.getServiceReference(Mockito.anyString())).thenReturn(null);
 
         cmdFile = File.createTempFile(getClass().getSimpleName(), "cmd");
         final PrintWriter w = new PrintWriter(new FileWriter(cmdFile));
