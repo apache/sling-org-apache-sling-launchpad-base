@@ -363,7 +363,7 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
                 ",".concat(calculateServletPackages(servletVersion, getServletContext().getMajorVersion())));
         // extra capabilities
         final String servletCaps = "osgi.contract;osgi.contract=JavaServlet;version:Version=\" " + servletVersion + "\";" +
-                        "uses:=\"jakarta.servlet,jakarta.servlet.http,jakarta.servlet.descriptor,jakarta.servlet.annotation,jakarta.servlet.jsp.jstl.core,jakarta.servlet.jsp.jstl.fmt\"";
+                        "uses:=\"jakarta.servlet,jakarta.servlet.http,jakarta.servlet.descriptor,jakarta.servlet.annotation\"";
         props.put(Sling.PROP_EXTRA_CAPS, servletCaps);
 
         // prevent system properties from being considered
