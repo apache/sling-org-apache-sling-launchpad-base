@@ -18,7 +18,7 @@ package org.apache.sling.launchpad.base.webapp;
 
 import java.util.Map;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.apache.felix.framework.Logger;
 import org.apache.sling.launchpad.api.LaunchpadContentProvider;

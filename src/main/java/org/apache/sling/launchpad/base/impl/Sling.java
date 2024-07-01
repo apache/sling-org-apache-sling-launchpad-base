@@ -288,7 +288,7 @@ public class Sling {
     /**
      * Called when the OSGi framework is being started. This implementation
      * registers as a service listener for the
-     * <code>javax.servlet.Servlet</code> class and calls the
+     * <code>jakarta.servlet.Servlet</code> class and calls the
      * {@link #doStartBundle()} method for implementations to execute more
      * startup tasks. Additionally the <code>context</code> URL protocol
      * handler is registered.

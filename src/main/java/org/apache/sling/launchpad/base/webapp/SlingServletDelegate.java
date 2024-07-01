@@ -28,13 +28,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.GenericServlet;
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.GenericServlet;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.felix.framework.Logger;
 import org.apache.felix.http.proxy.ProxyServlet;
@@ -56,10 +56,10 @@ import org.osgi.framework.ServiceReference;
  * <li>The {@link #init()} method launches Apache <code>Felix</code> as the
  * OSGi framework implementation we use.
  * <li>Registers as a service listener interested for services of type
- * <code>javax.servlet.Servlet</code>.
+ * <code>jakarta.servlet.Servlet</code>.
  * <li>Handles requests by delegating to a servlet which is expected to be
  * registered with the framework as a service of type
- * <code>javax.servlet.Servlet</code>. If no delegatee servlet has been
+ * <code>jakarta.servlet.Servlet</code>. If no delegatee servlet has been
  * registered request handlings results in a temporary unavailability of the
  * servlet.
  * </ul>
@@ -262,7 +262,7 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
      *            client's request
      * @param res the <code>ServletResponse</code> object that will contain
      *            the servlet's response
-     * @throws javax.servlet.UnavailableException if the no delegatee servlet is currently
+     * @throws jakarta.servlet.UnavailableException if the no delegatee servlet is currently
      *             available
      * @throws ServletException if an exception occurs that interferes with the
      *             servlet's normal operation occurred
@@ -315,17 +315,21 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
     // ---------- Configuration Loading ----------------------------------------
 
     private String calculateServletPackages(final String servletVersion, final int majorVersion) {
-        final String servlet2Packages = "javax.servlet;javax.servlet.http;javax.servlet.resources";
-        final String servlet3Packages = servlet2Packages + ";javax.servlet.annotation;javax.servlet.descriptor";
-        if (majorVersion < 3) {
-            return servlet2Packages.concat(";version=").concat(servletVersion);
-        } else if (majorVersion < 4) {
-            return servlet2Packages.concat(";version=2.6,").concat(servlet3Packages).concat(";version=")
+
+        final String servlet5Packages = "jakarta.servlet;jakarta.servlet.http;jakarta.servlet.descriptor;jakarta.servlet.annotation";
+        final String servlet6Packages = servlet5Packages;
+
+        if (majorVersion < 5) {
+            // TODO - not supported ?
+            return "";
+        } else if (majorVersion < 6) {
+            return servlet5Packages.concat(";version=").concat(servletVersion);
+        } else if (majorVersion < 7) {
+            return servlet5Packages.concat(";version=5.0,").concat(servlet6Packages).concat(";version=")
                     .concat(servletVersion);
         }
-        return servlet2Packages.concat(";version=2.6,").concat(servlet3Packages).concat(";version=3.1,")
-                .concat(servlet3Packages).concat(";version=").concat(servletVersion);
-
+        return servlet5Packages.concat(";version=5.0,").concat(servlet6Packages).concat(";version=6.0,")
+                .concat(servlet6Packages).concat(";version=").concat(servletVersion);
     }
 
     /**
@@ -359,7 +363,7 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
                 ",".concat(calculateServletPackages(servletVersion, getServletContext().getMajorVersion())));
         // extra capabilities
         final String servletCaps = "osgi.contract;osgi.contract=JavaServlet;version:Version=\" " + servletVersion + "\";" +
-                        "uses:=\"javax.servlet,javax.servlet.http,javax.servlet.descriptor,javax.servlet.annotation\"";
+                        "uses:=\"jakarta.servlet,jakarta.servlet.http,jakarta.servlet.descriptor,jakarta.servlet.annotation,jakarta.servlet.jsp.jstl.core,jakarta.servlet.jsp.jstl.fmt\"";
         props.put(Sling.PROP_EXTRA_CAPS, servletCaps);
 
         // prevent system properties from being considered
