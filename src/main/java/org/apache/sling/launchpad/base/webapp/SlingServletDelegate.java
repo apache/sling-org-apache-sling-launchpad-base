@@ -320,8 +320,7 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
         final String servlet6Packages = servlet5Packages;
 
         if (majorVersion < 5) {
-            // TODO - not supported ?
-            return "";
+            throw new RuntimeException("Servlet API version " + majorVersion + " is not supported. Please use version 5 or 6.");
         } else if (majorVersion < 6) {
             return servlet5Packages.concat(";version=").concat(servletVersion);
         } else if (majorVersion < 7) {
