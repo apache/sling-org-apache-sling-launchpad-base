@@ -87,13 +87,8 @@ public class SlingServletDelegateTest {
         int majorVersion = 5;
         String expectedPackages = "jakarta.servlet;jakarta.servlet.http;jakarta.servlet.descriptor;jakarta.servlet.annotation;version=5.0";
 
-        // Access the private calculateServletPackages method
-        Method calculateServletPackagesMethod = SlingServletDelegate.class.getDeclaredMethod("calculateServletPackages", String.class, int.class);
-        calculateServletPackagesMethod.setAccessible(true);
-
-        // Invoke the method
-        String actualPackages = (String) calculateServletPackagesMethod.invoke(slingServletDelegate, servletVersion, majorVersion);
-
+        // Get the servlet packages
+        String actualPackages = slingServletDelegate.calculateServletPackages(servletVersion, majorVersion);
         // Verify
         assertEquals(expectedPackages, actualPackages);
     }
@@ -105,13 +100,8 @@ public class SlingServletDelegateTest {
         String expectedPackages = "jakarta.servlet;jakarta.servlet.http;jakarta.servlet.descriptor;jakarta.servlet.annotation;version=5.0"
                 + ",jakarta.servlet;jakarta.servlet.http;jakarta.servlet.descriptor;jakarta.servlet.annotation;version=6.0";
 
-        // Access the private calculateServletPackages method
-        Method calculateServletPackagesMethod = SlingServletDelegate.class.getDeclaredMethod("calculateServletPackages", String.class, int.class);
-        calculateServletPackagesMethod.setAccessible(true);
-
-        // Invoke the method
-        String actualPackages = (String) calculateServletPackagesMethod.invoke(slingServletDelegate, servletVersion, majorVersion);
-
+        // Get the servlet packages
+        String actualPackages = slingServletDelegate.calculateServletPackages(servletVersion, majorVersion);
         // Verify
         assertEquals(expectedPackages, actualPackages);
     }

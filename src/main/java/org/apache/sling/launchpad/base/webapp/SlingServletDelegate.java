@@ -314,7 +314,7 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
 
     // ---------- Configuration Loading ----------------------------------------
 
-    private String calculateServletPackages(final String servletVersion, final int majorVersion) {
+    protected String calculateServletPackages(final String servletVersion, final int majorVersion) {
 
         final String servlet5Packages = "jakarta.servlet;jakarta.servlet.http;jakarta.servlet.descriptor;jakarta.servlet.annotation";
         final String servlet6Packages = servlet5Packages;
