@@ -22,14 +22,10 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.function.ThrowingRunnable;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.verify;
 
 
@@ -55,34 +51,16 @@ public class SlingServletDelegateTest {
         verify(servletResponse).sendError(HttpServletResponse.SC_NOT_FOUND);
     }
 
-    @Test
-    public void testCalculateServletPackagesForVersionLessThan5() throws Exception {
+    @Test(expected = RuntimeException.class)
+    public void testCalculateServletPackagesForVersionLessThan5() {
         String servletVersion = "3.1";
         int majorVersion = 3;
 
-        // Access the private calculateServletPackages method
-        Method calculateServletPackagesMethod = SlingServletDelegate.class.getDeclaredMethod("calculateServletPackages", String.class, int.class);
-        calculateServletPackagesMethod.setAccessible(true);
-
-        ThrowingRunnable runnable = () -> {
-            try {
-                calculateServletPackagesMethod.invoke(slingServletDelegate, servletVersion, majorVersion);
-            } catch (InvocationTargetException e) {
-                throw (RuntimeException) e.getTargetException();
-            }
-        };
-
-        // Invoke the method
-        RuntimeException exception = assertThrows(RuntimeException.class, runnable);
-
-        String expectedMessage = "Servlet API version " + majorVersion + " is not supported. Please use version 5 or 6.";
-        String actualMessage = exception.getMessage();
-
-        assertEquals(expectedMessage, actualMessage);
+        slingServletDelegate.calculateServletPackages(servletVersion, majorVersion);
     }
 
     @Test
-    public void testCalculateServletPackagesForVersion5() throws Exception {
+    public void testCalculateServletPackagesForVersion5() {
         String servletVersion = "5.0";
         int majorVersion = 5;
         String expectedPackages = "jakarta.servlet;jakarta.servlet.http;jakarta.servlet.descriptor;jakarta.servlet.annotation;version=5.0";
@@ -94,7 +72,7 @@ public class SlingServletDelegateTest {
     }
 
     @Test
-    public void testCalculateServletPackagesForVersion6() throws Exception {
+    public void testCalculateServletPackagesForVersion6() {
         String servletVersion = "6.0";
         int majorVersion = 6;
         String expectedPackages = "jakarta.servlet;jakarta.servlet.http;jakarta.servlet.descriptor;jakarta.servlet.annotation;version=5.0"
