@@ -48,7 +48,7 @@ public interface SharedConstants {
     /**
      * The fully qualified name of the class used by the Sling Web Applicaiton
      * servlet to control the framework. This class implements the
-     * <code>javax.servlet.Servlet</code> and {@link Launcher} (for setup only)
+     * <code>jakarta.servlet.Servlet</code> and {@link Launcher} (for setup only)
      * interfaces.
      */
     public static final String DEFAULT_SLING_SERVLET = "org.apache.sling.launchpad.base.webapp.SlingServletDelegate";
