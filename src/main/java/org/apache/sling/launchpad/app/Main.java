@@ -718,7 +718,7 @@ public class Main {
                 String value = arg.getValue();
                 switch (arg.getKey().charAt(0)) {
                     case 'j':
-                        if (value == arg.getKey()) {
+                        if (value.equals(arg.getKey())) {
                             errorArg("-j", "Missing host:port value");
                             errorArg = true;
                             continue;
@@ -727,7 +727,7 @@ public class Main {
                         break;
 
                     case 'l':
-                        if (value == arg.getKey()) {
+                        if (value.equals(arg.getKey())) {
                             errorArg("-l", "Missing log level value");
                             errorArg = true;
                             continue;
@@ -736,7 +736,7 @@ public class Main {
                         break;
 
                     case 'f':
-                        if (value == arg.getKey()) {
+                        if (value.equals(arg.getKey())) {
                             errorArg("-f", "Missing log file value");
                             errorArg = true;
                             continue;
@@ -747,7 +747,7 @@ public class Main {
                         break;
 
                     case 'c':
-                        if (value == arg.getKey()) {
+                        if (value.equals(arg.getKey())) {
                             errorArg("-c", "Missing directory value");
                             errorArg = true;
                             continue;
@@ -756,7 +756,7 @@ public class Main {
                         break;
 
                     case 'i':
-                        if (value == arg.getKey()) {
+                        if (value.equals(arg.getKey())) {
                             errorArg("-i", "Missing launchpad directory value");
                             errorArg = true;
                             continue;
@@ -765,7 +765,7 @@ public class Main {
                         break;
 
                     case 'a':
-                        if (value == arg.getKey()) {
+                        if (value.equals(arg.getKey())) {
                             errorArg("-a", "Missing address value");
                             errorArg = true;
                             continue;
@@ -774,7 +774,7 @@ public class Main {
                         break;
 
                     case 'p':
-                        if (value == arg.getKey()) {
+                        if (value.equals(arg.getKey())) {
                             errorArg("-p", "Missing port value");
                             errorArg = true;
                             continue;
@@ -790,7 +790,7 @@ public class Main {
                         break;
 
                     case 'r':
-                        if (value == arg.getKey()) {
+                        if (value.equals(arg.getKey())) {
                             errorArg("-r", "Missing root path value");
                             errorArg = true;
                             continue;
@@ -803,7 +803,7 @@ public class Main {
                         break;
 
                     case 'D':
-                        if (value == arg.getKey()) {
+                        if (value.equals(arg.getKey())) {
                             errorArg("-D", "Missing property assignment");
                             errorArg = true;
                             continue;
