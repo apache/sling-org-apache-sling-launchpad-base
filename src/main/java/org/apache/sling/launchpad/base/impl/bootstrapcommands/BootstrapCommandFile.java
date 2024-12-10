@@ -42,12 +42,13 @@ public class BootstrapCommandFile {
     private final Logger logger;
 
     private static final List<Command> commandPrototypes = new ArrayList<Command>();
+
     static {
         commandPrototypes.add(new UninstallBundleCommand());
     }
 
-    /** 
-     * Will load our commands from specified file, if found 
+    /**
+     * Will load our commands from specified file, if found
      * @param logger Logger to use
      * @param cmdFile File to load commands from, or null
      */
@@ -56,34 +57,36 @@ public class BootstrapCommandFile {
         this.commandFile = cmdFile;
     }
 
-    /** 
+    /**
      * True if we have a command file that needs to be executed, based on its
      * file timestamp and stored timstamp
      * @param ctx BundleContext to use
      * @return True if we have a command file that needs to be executed
-     * 
+     *
      */
     boolean anythingToExecute(BundleContext ctx) {
         boolean result = false;
-        if(commandFile != null && commandFile.exists() && commandFile.canRead()) {
+        if (commandFile != null && commandFile.exists() && commandFile.canRead()) {
             final long cmdTs = commandFile.lastModified();
             long lastExecution = 0;
             try {
                 lastExecution = loadTimestamp(ctx);
-            } catch(IOException ioe) {
+            } catch (IOException ioe) {
                 logger.log(Logger.LOG_INFO, "IOException reading timestamp", ioe);
             }
-            if(cmdTs > lastExecution) {
-                logger.log(Logger.LOG_INFO,
+            if (cmdTs > lastExecution) {
+                logger.log(
+                        Logger.LOG_INFO,
                         "Command file timestamp > stored timestamp, need to execute commands ("
-                        + commandFile.getAbsolutePath() + ")");
+                                + commandFile.getAbsolutePath() + ")");
                 result = true;
             }
         }
-        if(!result) {
-            logger.log(Logger.LOG_INFO,
+        if (!result) {
+            logger.log(
+                    Logger.LOG_INFO,
                     "Command file absent or older than last execution timestamp, nothing to execute ("
-                    + commandFile.getAbsolutePath() + ")");
+                            + commandFile.getAbsolutePath() + ")");
         }
         return result;
     }
@@ -101,19 +104,19 @@ public class BootstrapCommandFile {
             try {
                 is = new FileInputStream(commandFile);
                 final List<Command> cmds = parse(is);
-                for(Command cmd : cmds) {
+                for (Command cmd : cmds) {
                     try {
                         logger.log(Logger.LOG_DEBUG, "Executing command: " + cmd);
                         needsRestart |= cmd.execute(logger, ctx);
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         logger.log(Logger.LOG_WARNING, "Exception in command execution (" + cmd + ") :" + e);
                     }
                 }
             } finally {
-                if(is != null) {
+                if (is != null) {
                     try {
                         is.close();
-                    } catch(IOException ignore) {
+                    } catch (IOException ignore) {
                         // ignore
                     }
                 }
@@ -121,7 +124,7 @@ public class BootstrapCommandFile {
 
             try {
                 storeTimestamp(ctx);
-            } catch(IOException ioe) {
+            } catch (IOException ioe) {
                 logger.log(Logger.LOG_WARNING, "IOException while storing timestamp", ioe);
             }
         }
@@ -134,13 +137,13 @@ public class BootstrapCommandFile {
         final List<Command> result = new ArrayList<Command>();
         final BufferedReader r = new BufferedReader(new InputStreamReader(is));
         String line = null;
-        while( (line = r.readLine()) != null) {
+        while ((line = r.readLine()) != null) {
             line = line.trim();
-            if(line.length() > 0 && !line.startsWith(COMMENT_PREFIX)) {
+            if (line.length() > 0 && !line.startsWith(COMMENT_PREFIX)) {
                 Command toAdd = null;
-                for(Command proto : commandPrototypes) {
+                for (Command proto : commandPrototypes) {
                     toAdd = proto.parse(line);
-                    if(toAdd != null) {
+                    if (toAdd != null) {
                         break;
                     }
                 }
@@ -162,17 +165,17 @@ public class BootstrapCommandFile {
     private long loadTimestamp(BundleContext ctx) throws IOException {
         long result = 0;
         final File f = getTimestampFile(ctx);
-        if(f.exists()) {
+        if (f.exists()) {
             FileInputStream fis = null;
             try {
                 fis = new FileInputStream(f);
                 byte[] bytes = new byte[20];
                 int len = fis.read(bytes);
-                if(len > 0) {
+                if (len > 0) {
                     result = Long.parseLong(new String(bytes, 0, len));
                 }
             } finally {
-                if(fis != null) {
+                if (fis != null) {
                     fis.close();
                 }
             }
@@ -187,7 +190,7 @@ public class BootstrapCommandFile {
             fos = new FileOutputStream(f);
             fos.write(String.valueOf(System.currentTimeMillis()).getBytes());
         } finally {
-            if(fos != null) {
+            if (fos != null) {
                 fos.close();
             }
         }

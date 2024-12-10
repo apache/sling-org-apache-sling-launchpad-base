@@ -30,7 +30,8 @@ interface Command {
         ParseException(String reason) {
             super(reason);
         }
-    };
+    }
+    ;
 
     /** Try to parse given command line
      * @return null if we don't know the specified command

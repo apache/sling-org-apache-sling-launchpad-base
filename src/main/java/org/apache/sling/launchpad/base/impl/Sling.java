@@ -1,20 +1,27 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.sling.launchpad.base.impl;
+
+import javax.management.Attribute;
+import javax.management.AttributeList;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,11 +40,6 @@ import java.util.Properties;
 import java.util.SortedMap;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
-
-import javax.management.Attribute;
-import javax.management.AttributeList;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
 import org.apache.felix.framework.Logger;
 import org.apache.felix.framework.util.FelixConstants;
@@ -186,11 +188,12 @@ public class Sling {
      * @param propOverwrite The properties to overwrite
      * @throws BundleException if the framework cannot be initialized.
      */
-    public Sling(final Notifiable notifiable,
+    public Sling(
+            final Notifiable notifiable,
             final Logger logger,
             final LaunchpadContentProvider resourceProvider,
             final Map<String, String> propOverwrite)
-    throws BundleException {
+            throws BundleException {
 
         this.logger = logger;
         this.resourceProvider = resourceProvider;
@@ -213,8 +216,9 @@ public class Sling {
             Framework tmpFramework = createFramework(notifiable, logger, props);
             init(tmpFramework);
 
-            final boolean restart = new BootstrapInstaller(tmpFramework.getBundleContext(), logger,
-                    resourceProvider, startupManager.getMode()).install();
+            final boolean restart = new BootstrapInstaller(
+                            tmpFramework.getBundleContext(), logger, resourceProvider, startupManager.getMode())
+                    .install();
             startupManager.markInstalled();
 
             if (restart) {
@@ -265,17 +269,12 @@ public class Sling {
                 } catch (BundleException be) {
 
                     // may be thrown by stop, log but continue
-                    logger.log(Logger.LOG_ERROR,
-                        "Failure initiating Framework Shutdown", be);
+                    logger.log(Logger.LOG_ERROR, "Failure initiating Framework Shutdown", be);
 
                 } catch (InterruptedException ie) {
 
                     // may be thrown by waitForStop, log but continue
-                    logger.log(
-                        Logger.LOG_ERROR,
-                        "Interrupted while waiting for the Framework Termination",
-                        ie);
-
+                    logger.log(Logger.LOG_ERROR, "Interrupted while waiting for the Framework Termination", ie);
                 }
 
                 logger.log(Logger.LOG_INFO, "Apache Sling stopped");
@@ -301,22 +300,24 @@ public class Sling {
 
         // register the context URL handler
         Hashtable<String, Object> props = new Hashtable<String, Object>();
-        props.put(URLConstants.URL_HANDLER_PROTOCOL, new String[] { "context" });
-        ContextProtocolHandler contextHandler = new ContextProtocolHandler(
-            this.resourceProvider);
-        bundleContext.registerService(URLStreamHandlerService.class.getName(),
-            contextHandler, props);
+        props.put(URLConstants.URL_HANDLER_PROTOCOL, new String[] {"context"});
+        ContextProtocolHandler contextHandler = new ContextProtocolHandler(this.resourceProvider);
+        bundleContext.registerService(URLStreamHandlerService.class.getName(), contextHandler, props);
 
         // register the platform MBeanServer
         MBeanServer platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
         Hashtable<String, Object> mbeanProps = new Hashtable<String, Object>();
         try {
             ObjectName beanName = ObjectName.getInstance("JMImplementation:type=MBeanServerDelegate");
-            AttributeList attrs = platformMBeanServer.getAttributes(beanName,
-                new String[] { "MBeanServerId", "SpecificationName",
-                    "SpecificationVersion", "SpecificationVendor",
-                    "ImplementationName", "ImplementationVersion",
-                    "ImplementationVendor" });
+            AttributeList attrs = platformMBeanServer.getAttributes(beanName, new String[] {
+                "MBeanServerId",
+                "SpecificationName",
+                "SpecificationVersion",
+                "SpecificationVendor",
+                "ImplementationName",
+                "ImplementationVersion",
+                "ImplementationVendor"
+            });
             for (Object object : attrs) {
                 Attribute attr = (Attribute) object;
                 if (attr.getValue() != null) {
@@ -325,20 +326,19 @@ public class Sling {
             }
         } catch (Exception je) {
             logger.log(
-                Logger.LOG_INFO,
-                "start: Cannot set service properties of Platform MBeanServer service, registering without",
-                je);
+                    Logger.LOG_INFO,
+                    "start: Cannot set service properties of Platform MBeanServer service, registering without",
+                    je);
         }
-        bundleContext.registerService(MBeanServer.class.getName(),
-            platformMBeanServer, mbeanProps);
+        bundleContext.registerService(MBeanServer.class.getName(), platformMBeanServer, mbeanProps);
         bundleContext.registerService(LaunchpadContentProvider.class.getName(), resourceProvider, null);
     }
 
     // ---------- Creating the framework instance
 
     @SuppressWarnings("unchecked")
-    private Framework createFramework(final Notifiable notifiable,
-            final Logger logger, @SuppressWarnings("rawtypes") Map props)
+    private Framework createFramework(
+            final Notifiable notifiable, final Logger logger, @SuppressWarnings("rawtypes") Map props)
             throws Exception {
         props.put(FelixConstants.LOG_LOGGER_PROP, logger);
         return new SlingFelix(notifiable, props);
@@ -353,17 +353,16 @@ public class Sling {
     }
 
     private void restart(final Framework framework) throws BundleException {
-        if ((framework.getState() & (Bundle.STARTING|Bundle.ACTIVE|Bundle.STOPPING)) != 0) {
-            if ( framework instanceof SlingFelix ) {
-                ((SlingFelix)framework).restart();
+        if ((framework.getState() & (Bundle.STARTING | Bundle.ACTIVE | Bundle.STOPPING)) != 0) {
+            if (framework instanceof SlingFelix) {
+                ((SlingFelix) framework).restart();
             } else {
                 framework.stop();
             }
             try {
                 framework.waitForStop(REINIT_TIMEOUT);
             } catch (InterruptedException ie) {
-                throw new BundleException(
-                    "Interrupted while waiting for the framework stop before reinitialization");
+                throw new BundleException("Interrupted while waiting for the framework stop before reinitialization");
             }
         }
     }
@@ -386,8 +385,7 @@ public class Sling {
      * @return A <tt>Properties</tt> instance or <tt>null</tt> if there was
      *         an error.
      */
-    private Map<String, String> loadConfigProperties(
-            final Map<String, String> propOverwrite) throws BundleException {
+    private Map<String, String> loadConfigProperties(final Map<String, String> propOverwrite) throws BundleException {
         // The config properties file is either specified by a system
         // property or it is in the same directory as the Felix JAR file.
         // Try to load it from one of these places.
@@ -456,10 +454,8 @@ public class Sling {
         this.loadPropertiesOverride(runtimeProps);
 
         // resolve boot delegation and system packages
-        this.resolve(runtimeProps, "org.osgi.framework.bootdelegation",
-            "sling.bootdelegation.");
-        this.resolve(runtimeProps, "org.osgi.framework.system.packages",
-            "sling.system.packages.");
+        this.resolve(runtimeProps, "org.osgi.framework.bootdelegation", "sling.bootdelegation.");
+        this.resolve(runtimeProps, "org.osgi.framework.system.packages", "sling.system.packages.");
 
         // reset back the sling home property
         // might have been overwritten by system properties, included
@@ -474,8 +470,7 @@ public class Sling {
 
         // Perform variable substitution for system properties.
         for (Entry<String, String> entry : runtimeProps.entrySet()) {
-            entry.setValue(Util.substVars(entry.getValue(), entry.getKey(), null,
-                runtimeProps));
+            entry.setValue(Util.substVars(entry.getValue(), entry.getKey(), null, runtimeProps));
         }
 
         // look for context:/ URLs to substitute
@@ -508,8 +503,7 @@ public class Sling {
                         staticProps.put(name, "${sling.home}" + path);
 
                     } catch (IOException ioe) {
-                        this.logger.log(Logger.LOG_ERROR, "Cannot copy file "
-                            + value + " to " + target, ioe);
+                        this.logger.log(Logger.LOG_ERROR, "Cannot copy file " + value + " to " + target, ioe);
                     } finally {
                         if (dest != null) {
                             try {
@@ -545,8 +539,7 @@ public class Sling {
 
             tmp.store(os, "Overlay properties for configuration");
         } catch (Exception ex) {
-            this.logger.log(Logger.LOG_ERROR,
-                "Error loading overlay properties from " + propFile, ex);
+            this.logger.log(Logger.LOG_ERROR, "Error loading overlay properties from " + propFile, ex);
         } finally {
             if (os != null) {
                 try {
@@ -556,7 +549,6 @@ public class Sling {
                 }
             }
         }
-
 
         Map<String, String> result = new HashMap<>();
 
@@ -587,8 +579,7 @@ public class Sling {
      *            any matching property values are appended.
      * @param prefix The prefix of properties to handle.
      */
-    private void resolve(Map<String, String> props, String osgiProp,
-            String prefix) {
+    private void resolve(Map<String, String> props, String osgiProp, String prefix) {
         final String propVal = props.get(osgiProp);
         StringBuffer prop = new StringBuffer(propVal == null ? "" : propVal);
         boolean mod = false;
@@ -597,23 +588,23 @@ public class Sling {
             if (key.startsWith(prefix)) {
                 if (key.indexOf("class.") == prefix.length()) {
                     // prefix is followed by checker class name
-                    String className = key.substring(prefix.length()
-                        + "class.".length());
+                    String className = key.substring(prefix.length() + "class.".length());
                     try {
                         this.getClass().getClassLoader().loadClass(className);
                     } catch (Throwable t) {
                         // don't really care, but class checking failed, so we
                         // do not add
-                        this.logger.log(Logger.LOG_DEBUG, "Class " + className
-                            + " not found. Ignoring '" + pEntry.getValue()
-                            + "' for property " + osgiProp);
+                        this.logger.log(
+                                Logger.LOG_DEBUG,
+                                "Class " + className
+                                        + " not found. Ignoring '" + pEntry.getValue()
+                                        + "' for property " + osgiProp);
                         continue;
                     }
                 }
 
                 // get here if class is known or no checker class
-                this.logger.log(Logger.LOG_DEBUG, "Adding '"
-                    + pEntry.getValue() + "' to property " + osgiProp);
+                this.logger.log(Logger.LOG_DEBUG, "Adding '" + pEntry.getValue() + "' to property " + osgiProp);
                 if (prop.length() > 0) {
                     prop.append(',');
                 }
@@ -624,8 +615,7 @@ public class Sling {
 
         // replace the property with the modified property
         if (mod) {
-            this.logger.log(Logger.LOG_DEBUG, "Setting property " + osgiProp
-                + " to " + prop.toString());
+            this.logger.log(Logger.LOG_DEBUG, "Setting property " + osgiProp + " to " + prop.toString());
             props.put(osgiProp, prop.toString());
         }
     }
@@ -643,21 +633,19 @@ public class Sling {
      * @param oldName The old key of the property value
      * @param newName The new key of the property value
      */
-    private void migrateProp(Map<String, String> props, String oldName,
-            String newName) {
+    private void migrateProp(Map<String, String> props, String oldName, String newName) {
         String propValue = props.remove(oldName);
         if (propValue != null) {
             String previousNewValue = props.put(newName, propValue);
             if (previousNewValue != null) {
-                logger.log(Logger.LOG_WARNING, "Old value (" + previousNewValue
-                    + ") of property " + newName + " by value: " + propValue);
+                logger.log(
+                        Logger.LOG_WARNING,
+                        "Old value (" + previousNewValue + ") of property " + newName + " by value: " + propValue);
             } else {
-                logger.log(Logger.LOG_INFO, "Property " + oldName + " ("
-                    + propValue + ") renamed to " + newName);
+                logger.log(Logger.LOG_INFO, "Property " + oldName + " (" + propValue + ") renamed to " + newName);
             }
         } else {
-            logger.log(Logger.LOG_DEBUG, "Property " + oldName
-                + " does not exist, nothing to do");
+            logger.log(Logger.LOG_DEBUG, "Property " + oldName + " does not exist, nothing to do");
         }
     }
 
@@ -686,8 +674,7 @@ public class Sling {
      * @param properties The <code>Properties</code> object to which custom
      *            properties may be added.
      */
-    protected void loadPropertiesOverride(@SuppressWarnings("unused") Map<String, String> properties) {
-    }
+    protected void loadPropertiesOverride(@SuppressWarnings("unused") Map<String, String> properties) {}
 
     /**
      * Returns the <code>BundleContext</code> of the system bundle of the OSGi
@@ -706,8 +693,7 @@ public class Sling {
     /**
      * Returns the abstract path name to the <code>sling.properties</code> file.
      */
-    private File getSlingProperties(final String slingHome,
-            final Map<String, String> properties) {
+    private File getSlingProperties(final String slingHome, final Map<String, String> properties) {
         final String prop = properties.get(SharedConstants.SLING_PROPERTIES);
         if (prop == null) {
             return new File(slingHome, CONFIG_PROPERTIES);
@@ -752,16 +738,15 @@ public class Sling {
         // Build the sort map of include properties first
         // and remove include elements from the properties
         SortedMap<String, String> includes = new TreeMap<String, String>();
-        for (Iterator<Entry<String, String>> pi = props.entrySet().iterator(); pi.hasNext();) {
+        for (Iterator<Entry<String, String>> pi = props.entrySet().iterator(); pi.hasNext(); ) {
             Entry<String, String> entry = pi.next();
-            if (entry.getKey().startsWith("sling.include.")
-                || entry.getKey().equals("sling.include")) {
+            if (entry.getKey().startsWith("sling.include.") || entry.getKey().equals("sling.include")) {
                 includes.put(entry.getKey(), entry.getValue());
                 pi.remove();
             }
         }
 
-        for (Iterator<Entry<String, String>> ii = includes.entrySet().iterator(); ii.hasNext();) {
+        for (Iterator<Entry<String, String>> ii = includes.entrySet().iterator(); ii.hasNext(); ) {
             Map.Entry<String, String> entry = ii.next();
             String key = entry.getKey();
             String include = entry.getValue();
@@ -789,10 +774,9 @@ public class Sling {
                         this.load(props, is);
                     }
                 } catch (IOException ioe) {
-                    this.logger.log(Logger.LOG_ERROR,
-                        "Error loading config properties from " + file, ioe);
+                    this.logger.log(Logger.LOG_ERROR, "Error loading config properties from " + file, ioe);
                 } finally {
-                    if ( is != null ) {
+                    if (is != null) {
                         try {
                             is.close();
                         } catch (IOException ignore) {
@@ -818,8 +802,7 @@ public class Sling {
             try {
                 this.load(props, is);
             } catch (IOException ioe) {
-                this.logger.log(Logger.LOG_ERROR,
-                    "Error loading config properties from " + resource, ioe);
+                this.logger.log(Logger.LOG_ERROR, "Error loading config properties from " + resource, ioe);
             } finally {
                 try {
                     is.close();
@@ -842,21 +825,19 @@ public class Sling {
             try {
                 this.load(props, new FileInputStream(file));
             } catch (IOException ioe) {
-                this.logger.log(Logger.LOG_ERROR,
-                    "Error loading config properties from "
-                        + file.getAbsolutePath(), ioe);
+                this.logger.log(
+                        Logger.LOG_ERROR, "Error loading config properties from " + file.getAbsolutePath(), ioe);
             }
         }
     }
 
-    private void load(Map<String, String> props, InputStream ins)
-            throws IOException {
+    private void load(Map<String, String> props, InputStream ins) throws IOException {
         try {
             Properties tmp = new Properties();
             tmp.load(ins);
 
             for (Map.Entry<Object, Object> entry : tmp.entrySet()) {
-                final String value = (String)entry.getValue();
+                final String value = (String) entry.getValue();
                 props.put((String) entry.getKey(), (value == null ? null : value.trim()));
             }
         } finally {
@@ -871,7 +852,7 @@ public class Sling {
     private void copyBootstrapCommandFile(final Map<String, String> props) {
         // check last modification date
         final URL url = this.resourceProvider.getResource(BootstrapInstaller.BOOTSTRAP_CMD_FILENAME);
-        if ( url != null ) {
+        if (url != null) {
             this.logger.log(Logger.LOG_DEBUG, "Checking last modification date of bootstrap command file.");
             InputStream is = null;
             OutputStream os = null;
@@ -880,33 +861,39 @@ public class Sling {
                 final File launchpadHome = new File(props.get(SharedConstants.SLING_LAUNCHPAD));
                 final File cmdFile = new File(launchpadHome, BootstrapInstaller.BOOTSTRAP_CMD_FILENAME);
                 boolean copyFile = true;
-                if ( cmdFile.exists() && cmdFile.lastModified() >= lastModified ) {
+                if (cmdFile.exists() && cmdFile.lastModified() >= lastModified) {
                     copyFile = false;
                 }
-                if ( copyFile ) {
+                if (copyFile) {
                     this.logger.log(Logger.LOG_INFO, "Copying bootstrap command file.");
                     is = this.resourceProvider.getResourceAsStream(BootstrapInstaller.BOOTSTRAP_CMD_FILENAME);
                     os = new FileOutputStream(cmdFile);
                     final byte[] buffer = new byte[2048];
                     int l;
-                    while ( (l = is.read(buffer, 0, buffer.length)) != -1 ) {
+                    while ((l = is.read(buffer, 0, buffer.length)) != -1) {
                         os.write(buffer, 0, l);
                     }
                 }
 
             } catch (final IOException ioe) {
-                this.logger.log(Logger.LOG_INFO, "Ignoring exception during processing of bootstrap command file.", ioe);
+                this.logger.log(
+                        Logger.LOG_INFO, "Ignoring exception during processing of bootstrap command file.", ioe);
             } finally {
-                if ( is != null ) {
-                    try { is.close(); } catch (final IOException ignore) {}
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (final IOException ignore) {
+                    }
                 }
-                if ( os != null ) {
-                    try { os.close(); } catch (final IOException ignore) {}
+                if (os != null) {
+                    try {
+                        os.close();
+                    } catch (final IOException ignore) {
+                    }
                 }
             }
         } else {
             this.logger.log(Logger.LOG_DEBUG, "Bootstrap command file not found.");
         }
-
     }
 }

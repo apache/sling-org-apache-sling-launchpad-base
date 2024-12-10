@@ -41,12 +41,11 @@ public interface Notifiable {
      * that file must be used to replace the current Launcher JAR file and must
      * be used for restarting the framework. Otherwise the framework is
      * restarted from the existing Launcher JAR file.
-     * 
+     *
      * @param tmpFile A temporary file containing the contents of the
      *            <code>InputStream</code> given to the
      *            <code>Bundle.update(InputStream)</code> method. If no input
      *            stream has been provided, this parameter is <code>null</code>.
      */
     void updated(File tmpFile);
-
 }

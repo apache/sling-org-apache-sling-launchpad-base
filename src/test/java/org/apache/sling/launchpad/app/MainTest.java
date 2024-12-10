@@ -24,9 +24,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.sling.launchpad.base.shared.SharedConstants;
-
 import junit.framework.TestCase;
+import org.apache.sling.launchpad.base.shared.SharedConstants;
 
 public class MainTest extends TestCase {
 
@@ -51,96 +50,93 @@ public class MainTest extends TestCase {
     }
 
     public void test_parseCommandLine_single_dash() {
-        String[] args = { "-" };
+        String[] args = {"-"};
         Map<String, String> commandline = Main.parseCommandLine(args);
         assertNotNull("commandline map must not be null", commandline);
         assertTrue("commandline map must be empty", commandline.isEmpty());
     }
 
     public void test_parseCommandLine_single_arg_no_par() {
-        String[] args = { "-a" };
+        String[] args = {"-a"};
         Map<String, String> commandline = Main.parseCommandLine(args);
         assertNotNull("commandline map must not be null", commandline);
-        assertEquals("commandline map must have one entry", 1,
-            commandline.size());
-        assertEquals("single argument must be " + args[0].charAt(1),
+        assertEquals("commandline map must have one entry", 1, commandline.size());
+        assertEquals(
+                "single argument must be " + args[0].charAt(1),
                 String.valueOf(args[0].charAt(1)),
                 commandline.keySet().iterator().next());
-        assertEquals("single argument value must be " + args[0].charAt(1),
+        assertEquals(
+                "single argument value must be " + args[0].charAt(1),
                 String.valueOf(args[0].charAt(1)),
                 commandline.values().iterator().next());
     }
 
     public void test_parseCommandLine_single_arg_with_par() {
-        String[] args = { "-a", "value" };
+        String[] args = {"-a", "value"};
         Map<String, String> commandline = Main.parseCommandLine(args);
         assertNotNull("commandline map must not be null", commandline);
-        assertEquals("commandline map must have one entry", 1,
-            commandline.size());
-        assertEquals("single argument must be " + args[0].charAt(1),
-            String.valueOf(args[0].charAt(1)),
-            commandline.keySet().iterator().next());
-        assertEquals("single argument value must be " + args[1], args[1],
-            commandline.values().iterator().next());
+        assertEquals("commandline map must have one entry", 1, commandline.size());
+        assertEquals(
+                "single argument must be " + args[0].charAt(1),
+                String.valueOf(args[0].charAt(1)),
+                commandline.keySet().iterator().next());
+        assertEquals(
+                "single argument value must be " + args[1],
+                args[1],
+                commandline.values().iterator().next());
     }
 
     public void test_parseCommandLine_two_args_no_par() {
-        String[] args = { "-a", "-b" };
+        String[] args = {"-a", "-b"};
         Map<String, String> commandline = Main.parseCommandLine(args);
         assertNotNull("commandline map must not be null", commandline);
-        assertEquals("commandline map must have two entries", 2,
-            commandline.size());
+        assertEquals("commandline map must have two entries", 2, commandline.size());
         assertEquals("argument a must a", "a", commandline.get("a"));
         assertEquals("argument b must b", "b", commandline.get("b"));
     }
 
     public void test_parseCommandLine_two_args_first_par() {
-        String[] args = { "-a", "apar", "-b" };
+        String[] args = {"-a", "apar", "-b"};
         Map<String, String> commandline = Main.parseCommandLine(args);
         assertNotNull("commandline map must not be null", commandline);
-        assertEquals("commandline map must have two entries", 2,
-            commandline.size());
+        assertEquals("commandline map must have two entries", 2, commandline.size());
         assertEquals("argument a must apar", "apar", commandline.get("a"));
         assertEquals("argument b must b", "b", commandline.get("b"));
     }
 
     public void test_parseCommandLine_two_args_second_par() {
-        String[] args = { "-a", "-b", "bpar" };
+        String[] args = {"-a", "-b", "bpar"};
         Map<String, String> commandline = Main.parseCommandLine(args);
         assertNotNull("commandline map must not be null", commandline);
-        assertEquals("commandline map must have two entries", 2,
-            commandline.size());
+        assertEquals("commandline map must have two entries", 2, commandline.size());
         assertEquals("argument a must a", "a", commandline.get("a"));
         assertEquals("argument b must bpar", "bpar", commandline.get("b"));
     }
 
     public void test_parseCommandLine_two_args_all_par() {
-        String[] args = { "-a", "apar", "-b", "bpar" };
+        String[] args = {"-a", "apar", "-b", "bpar"};
         Map<String, String> commandline = Main.parseCommandLine(args);
         assertNotNull("commandline map must not be null", commandline);
-        assertEquals("commandline map must have two entries", 2,
-            commandline.size());
+        assertEquals("commandline map must have two entries", 2, commandline.size());
         assertEquals("argument a must apar", "apar", commandline.get("a"));
         assertEquals("argument b must bpar", "bpar", commandline.get("b"));
     }
 
     public void test_parseCommandLine_three_args_with_dash() {
-        String[] args = { "-a", "apar", "-", "-b", "bpar" };
+        String[] args = {"-a", "apar", "-", "-b", "bpar"};
         Map<String, String> commandline = Main.parseCommandLine(args);
         assertNotNull("commandline map must not be null", commandline);
-        assertEquals("commandline map must have three entries", 3,
-                commandline.size());
+        assertEquals("commandline map must have three entries", 3, commandline.size());
         assertEquals("argument a must apar", "apar", commandline.get("a"));
         assertEquals("argument -b must -b", "-b", commandline.get("-b"));
         assertEquals("argument bpar must bpar", "bpar", commandline.get("bpar"));
     }
 
     public void test_parseCommandLine_single_arg_with_dash_par() {
-        String[] args = { "-a", "-" };
+        String[] args = {"-a", "-"};
         Map<String, String> commandline = Main.parseCommandLine(args);
         assertNotNull("commandline map must not be null", commandline);
-        assertEquals("commandline map must have three entries", 1,
-            commandline.size());
+        assertEquals("commandline map must have three entries", 1, commandline.size());
         assertEquals("argument a must -", "-", commandline.get("a"));
     }
 
@@ -258,7 +254,8 @@ public class MainTest extends TestCase {
         assertEquals(1, props.size());
         assertEquals(Boolean.FALSE.toString(), props.get("sling.shutdown.hook"));
 
-        Map<String, String> props1 = Main.convertCommandLineArgs(Collections.singletonMap("D", "sling.shutdown.hook=" + Boolean.TRUE.toString()));
+        Map<String, String> props1 = Main.convertCommandLineArgs(
+                Collections.singletonMap("D", "sling.shutdown.hook=" + Boolean.TRUE.toString()));
         assertNotNull(props1);
         assertEquals(1, props1.size());
         assertEquals(Boolean.TRUE.toString(), props1.get("sling.shutdown.hook"));
@@ -297,8 +294,9 @@ public class MainTest extends TestCase {
         assertNull(props1);
     }
 
-    public void test_installShutdownHook() throws SecurityException, NoSuchMethodException, IllegalArgumentException,
-            IllegalAccessException, InvocationTargetException {
+    public void test_installShutdownHook()
+            throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException,
+                    InvocationTargetException {
         final Method m = Main.class.getDeclaredMethod("installShutdownHook", Map.class);
         m.setAccessible(true);
 
@@ -306,10 +304,14 @@ public class MainTest extends TestCase {
         System.getProperties().remove(key);
 
         TestCase.assertEquals(Boolean.TRUE, m.invoke(null, new HashMap<String, String>()));
-        TestCase.assertEquals(Boolean.TRUE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "true"))));
-        TestCase.assertEquals(Boolean.TRUE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "TRUE"))));
-        TestCase.assertEquals(Boolean.FALSE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "false"))));
-        TestCase.assertEquals(Boolean.FALSE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "not true"))));
+        TestCase.assertEquals(
+                Boolean.TRUE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "true"))));
+        TestCase.assertEquals(
+                Boolean.TRUE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "TRUE"))));
+        TestCase.assertEquals(
+                Boolean.FALSE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "false"))));
+        TestCase.assertEquals(
+                Boolean.FALSE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "not true"))));
 
         System.setProperty(key, "true");
         TestCase.assertEquals(Boolean.TRUE, m.invoke(null, new HashMap<String, String>()));
@@ -321,15 +323,23 @@ public class MainTest extends TestCase {
         TestCase.assertEquals(Boolean.FALSE, m.invoke(null, new HashMap<String, String>()));
 
         System.setProperty(key, "true");
-        TestCase.assertEquals(Boolean.TRUE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "true"))));
-        TestCase.assertEquals(Boolean.TRUE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "TRUE"))));
-        TestCase.assertEquals(Boolean.FALSE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "false"))));
-        TestCase.assertEquals(Boolean.FALSE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "not true"))));
+        TestCase.assertEquals(
+                Boolean.TRUE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "true"))));
+        TestCase.assertEquals(
+                Boolean.TRUE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "TRUE"))));
+        TestCase.assertEquals(
+                Boolean.FALSE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "false"))));
+        TestCase.assertEquals(
+                Boolean.FALSE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "not true"))));
 
         System.setProperty(key, "false");
-        TestCase.assertEquals(Boolean.TRUE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "true"))));
-        TestCase.assertEquals(Boolean.TRUE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "TRUE"))));
-        TestCase.assertEquals(Boolean.FALSE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "false"))));
-        TestCase.assertEquals(Boolean.FALSE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "not true"))));
+        TestCase.assertEquals(
+                Boolean.TRUE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "true"))));
+        TestCase.assertEquals(
+                Boolean.TRUE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "TRUE"))));
+        TestCase.assertEquals(
+                Boolean.FALSE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "false"))));
+        TestCase.assertEquals(
+                Boolean.FALSE, m.invoke(null, new HashMap<String, String>(Collections.singletonMap(key, "not true"))));
     }
 }

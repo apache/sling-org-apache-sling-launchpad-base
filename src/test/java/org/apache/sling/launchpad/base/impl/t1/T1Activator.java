@@ -42,8 +42,7 @@ public class T1Activator implements BundleActivator, Runnable {
         context.registerService(Runnable.class.getName(), this, null);
     }
 
-    public void stop(BundleContext context) throws Exception {
-    }
+    public void stop(BundleContext context) throws Exception {}
 
     public void run() {
         try {
@@ -52,5 +51,4 @@ public class T1Activator implements BundleActivator, Runnable {
             throw new RuntimeException(e);
         }
     }
-
 }

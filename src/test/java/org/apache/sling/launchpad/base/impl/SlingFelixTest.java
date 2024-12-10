@@ -18,17 +18,11 @@
  */
 package org.apache.sling.launchpad.base.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 
+import junit.framework.AssertionFailedError;
 import org.apache.sling.launchpad.base.shared.Notifiable;
 import org.junit.After;
 import org.junit.Before;
@@ -41,7 +35,12 @@ import org.osgi.framework.ServiceReference;
 import org.osgi.framework.launch.Framework;
 import org.osgi.service.packageadmin.PackageAdmin;
 
-import junit.framework.AssertionFailedError;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class SlingFelixTest {
 
@@ -65,7 +64,7 @@ public class SlingFelixTest {
     @Test
     public void testMultipleStop() {
         startSling();
-        for(int i=0; i < N_START_STOP; i++) {
+        for (int i = 0; i < N_START_STOP; i++) {
             stopSling();
         }
     }
@@ -73,7 +72,7 @@ public class SlingFelixTest {
     @Test
     public void testMultipleStartStop() {
         stopSling();
-        for(int i=0; i < N_START_STOP; i++) {
+        for (int i = 0; i < N_START_STOP; i++) {
             startSling();
             stopSling();
         }
@@ -88,9 +87,9 @@ public class SlingFelixTest {
 
         // as the notifiable is notified async we wait
         final long start = System.currentTimeMillis();
-        while ( !this.notifiable.stoppedCalled ) {
+        while (!this.notifiable.stoppedCalled) {
             // timeout on this wait
-            if ( System.currentTimeMillis() - start > STOPPED_CALLED_TIMEOUT_MSEC ) {
+            if (System.currentTimeMillis() - start > STOPPED_CALLED_TIMEOUT_MSEC) {
                 break;
             }
             try {
@@ -118,8 +117,10 @@ public class SlingFelixTest {
         assertNotNull(pa);
 
         assertNull("Integer class provided by the VM not from a bundle", pa.getBundle(Integer.class));
-        assertEquals("BundleContext class must come from the framework", framework.getBundle(),
-            pa.getBundle(BundleContext.class));
+        assertEquals(
+                "BundleContext class must come from the framework",
+                framework.getBundle(),
+                pa.getBundle(BundleContext.class));
     }
 
     @Test
@@ -182,7 +183,7 @@ public class SlingFelixTest {
     }
 
     private static void stopFramework(Framework f) {
-        if(f == null) {
+        if (f == null) {
             return;
         }
         try {
@@ -221,6 +222,5 @@ public class SlingFelixTest {
             this.updatedCalled = true;
             this.updatedCalledFile = tmpFile;
         }
-
     }
 }

@@ -34,7 +34,6 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.sling.launchpad.base.shared.Launcher;
 import org.apache.sling.launchpad.base.shared.Loader;
 import org.apache.sling.launchpad.base.shared.Notifiable;
@@ -146,8 +145,7 @@ public class SlingServlet extends GenericServlet implements Notifiable {
      * with said response status and framework is started in a separate thread.
      */
     @Override
-    public void service(ServletRequest req, ServletResponse res)
-            throws ServletException, IOException {
+    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
 
         // delegate the request to the registered delegatee servlet
         Servlet delegatee = sling;
@@ -156,8 +154,9 @@ public class SlingServlet extends GenericServlet implements Notifiable {
             // check for problematic application servers like WebSphere
             // where path info and servlet path is set wrong SLING-2410
             final HttpServletRequest request = (HttpServletRequest) req;
-            if ( request.getPathInfo() == null && request.getServletPath() != null
-                    && request.getServletPath().endsWith(".jsp") ) {
+            if (request.getPathInfo() == null
+                    && request.getServletPath() != null
+                    && request.getServletPath().endsWith(".jsp")) {
                 req = new HttpServletRequestWrapper(request) {
 
                     @Override
@@ -169,7 +168,6 @@ public class SlingServlet extends GenericServlet implements Notifiable {
                     public String getServletPath() {
                         return "";
                     }
-
                 };
             }
             delegatee.service(req, res);
@@ -183,9 +181,10 @@ public class SlingServlet extends GenericServlet implements Notifiable {
 
             startSling(req);
 
-            ((HttpServletResponse) res).sendError(
-                HttpServletResponse.SC_SERVICE_UNAVAILABLE,
-                "Apache Sling is currently starting up, please try again");
+            ((HttpServletResponse) res)
+                    .sendError(
+                            HttpServletResponse.SC_SERVICE_UNAVAILABLE,
+                            "Apache Sling is currently starting up, please try again");
         }
     }
 
@@ -223,7 +222,6 @@ public class SlingServlet extends GenericServlet implements Notifiable {
          * shutdown In any case we ensure the reference to the framework is
          * removed and remove the shutdown hook (but don't care if that fails).
          */
-
         log("Apache Sling has been stopped");
 
         // clear the reference to the framework
@@ -270,7 +268,6 @@ public class SlingServlet extends GenericServlet implements Notifiable {
             } finally {
                 updateFile.delete();
             }
-
         }
     }
 
@@ -283,12 +280,14 @@ public class SlingServlet extends GenericServlet implements Notifiable {
     private void startSling(final ServletRequest request) {
         if (startingSling == null) {
             slingHome = getSlingHome((HttpServletRequest) request);
-            Thread starter = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    startSling();
-                }
-            }, "SlingStarter_" + System.currentTimeMillis());
+            Thread starter = new Thread(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                            startSling();
+                        }
+                    },
+                    "SlingStarter_" + System.currentTimeMillis());
 
             starter.setDaemon(true);
             starter.start();
@@ -315,17 +314,14 @@ public class SlingServlet extends GenericServlet implements Notifiable {
         }
 
         try {
-            URL launcherJar = getServletContext().getResource(
-                SharedConstants.DEFAULT_SLING_LAUNCHER_JAR);
+            URL launcherJar = getServletContext().getResource(SharedConstants.DEFAULT_SLING_LAUNCHER_JAR);
             if (launcherJar == null) {
-                launcherJar = getServletContext().getResource(
-                    "/WEB-INF" + SharedConstants.DEFAULT_SLING_LAUNCHER_JAR);
+                launcherJar = getServletContext().getResource("/WEB-INF" + SharedConstants.DEFAULT_SLING_LAUNCHER_JAR);
             }
 
             startSling(launcherJar);
         } catch (MalformedURLException mue) {
-            log("Cannot load Apache Sling Launcher JAR "
-                + SharedConstants.DEFAULT_SLING_LAUNCHER_JAR, mue);
+            log("Cannot load Apache Sling Launcher JAR " + SharedConstants.DEFAULT_SLING_LAUNCHER_JAR, mue);
         }
     }
 
@@ -362,8 +358,7 @@ public class SlingServlet extends GenericServlet implements Notifiable {
         try {
             object = loader.loadLauncher(SharedConstants.DEFAULT_SLING_SERVLET);
         } catch (IllegalArgumentException iae) {
-            startupFailure("Cannot load Launcher Servlet "
-                + SharedConstants.DEFAULT_SLING_SERVLET, iae);
+            startupFailure("Cannot load Launcher Servlet " + SharedConstants.DEFAULT_SLING_SERVLET, iae);
             return;
         }
 
@@ -423,8 +418,7 @@ public class SlingServlet extends GenericServlet implements Notifiable {
         // access config and context to be able to log the sling.home source
 
         // 1. servlet config parameter
-        String slingHome = getServletConfig().getInitParameter(
-            SharedConstants.SLING_HOME);
+        String slingHome = getServletConfig().getInitParameter(SharedConstants.SLING_HOME);
         if (slingHome != null) {
 
             source = "servlet parameter sling.home";
@@ -432,8 +426,7 @@ public class SlingServlet extends GenericServlet implements Notifiable {
         } else {
 
             // 2. servlet context parameter
-            slingHome = getServletContext().getInitParameter(
-                SharedConstants.SLING_HOME);
+            slingHome = getServletContext().getInitParameter(SharedConstants.SLING_HOME);
             if (slingHome != null) {
 
                 source = "servlet context parameter sling.home";
@@ -460,10 +453,8 @@ public class SlingServlet extends GenericServlet implements Notifiable {
 
                         log("ServletContext path not available here, delaying startup until first request");
                         return null;
-
                     }
                 }
-
             }
         }
 
@@ -505,8 +496,7 @@ public class SlingServlet extends GenericServlet implements Notifiable {
             launchpadHome = new File(slingHome, launchpadHomeParam);
         }
 
-        properties.put(SharedConstants.SLING_LAUNCHPAD,
-            launchpadHome.getAbsolutePath());
+        properties.put(SharedConstants.SLING_LAUNCHPAD, launchpadHome.getAbsolutePath());
         return launchpadHome;
     }
 
@@ -523,8 +513,7 @@ public class SlingServlet extends GenericServlet implements Notifiable {
      * @return
      */
     private String toSlingHome(String contextPath) {
-        String prefix = System.getProperty(SLING_HOME_PREFIX,
-            SLING_HOME_PREFIX_DEFAULT);
+        String prefix = System.getProperty(SLING_HOME_PREFIX, SLING_HOME_PREFIX_DEFAULT);
 
         if (!prefix.endsWith("/")) {
             prefix = prefix.concat("/");
@@ -563,15 +552,14 @@ public class SlingServlet extends GenericServlet implements Notifiable {
 
     private Map<String, String> collectInitParameters() {
         HashMap<String, String> props = new HashMap<String, String>();
-        for (Enumeration<String> keys = getServletContext().getInitParameterNames(); keys.hasMoreElements();) {
+        for (Enumeration<String> keys = getServletContext().getInitParameterNames(); keys.hasMoreElements(); ) {
             String key = keys.nextElement();
             props.put(key, getServletContext().getInitParameter(key));
         }
-        for (Enumeration<String> keys = getServletConfig().getInitParameterNames(); keys.hasMoreElements();) {
+        for (Enumeration<String> keys = getServletConfig().getInitParameterNames(); keys.hasMoreElements(); ) {
             String key = keys.nextElement();
             props.put(key, getServletConfig().getInitParameter(key));
         }
         return props;
     }
-
 }

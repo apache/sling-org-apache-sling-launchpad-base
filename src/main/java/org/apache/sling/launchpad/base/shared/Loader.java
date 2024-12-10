@@ -56,7 +56,7 @@ public class Loader {
     /**
      * Default External Library Home
      */
-    private static final String EXTENSION_LIB_PATH="ext";
+    private static final String EXTENSION_LIB_PATH = "ext";
 
     /**
      * Creates a loader instance to load from the given launchpad home folder.
@@ -73,8 +73,7 @@ public class Loader {
      */
     public Loader(final File launchpadHome) {
         if (launchpadHome == null) {
-            throw new IllegalArgumentException(
-                "Launchpad Home folder must not be null or empty");
+            throw new IllegalArgumentException("Launchpad Home folder must not be null or empty");
         }
 
         this.launchpadHome = getLaunchpadHomeFile(launchpadHome);
@@ -102,30 +101,26 @@ public class Loader {
         final File launcherJarFile = getLauncherJarFile();
         info("Loading launcher class " + launcherClassName + " from " + launcherJarFile.getName());
         if (!launcherJarFile.canRead()) {
-            throw new IllegalArgumentException("Sling Launcher JAR "
-                + launcherJarFile + " is not accessible");
+            throw new IllegalArgumentException("Sling Launcher JAR " + launcherJarFile + " is not accessible");
         }
 
         final ClassLoader loader;
         try {
             loader = new LauncherClassLoader(launcherJarFile, getExtLibs());
         } catch (MalformedURLException e) {
-            throw new IllegalArgumentException(
-                "Cannot create an URL from the  JAR path name", e);
+            throw new IllegalArgumentException("Cannot create an URL from the  JAR path name", e);
         }
 
         try {
             final Class<?> launcherClass = loader.loadClass(launcherClassName);
             return launcherClass.newInstance();
         } catch (ClassNotFoundException cnfe) {
-            throw new IllegalArgumentException("Cannot find class "
-                + launcherClassName + " in " + launcherJarFile, cnfe);
+            throw new IllegalArgumentException(
+                    "Cannot find class " + launcherClassName + " in " + launcherJarFile, cnfe);
         } catch (InstantiationException e) {
-            throw new IllegalArgumentException(
-                "Cannot instantiate launcher class " + launcherClassName, e);
+            throw new IllegalArgumentException("Cannot instantiate launcher class " + launcherClassName, e);
         } catch (IllegalAccessException e) {
-            throw new IllegalArgumentException(
-                "Cannot access constructor of class " + launcherClassName, e);
+            throw new IllegalArgumentException("Cannot access constructor of class " + launcherClassName, e);
         }
     }
 
@@ -168,48 +163,51 @@ public class Loader {
         // extract bundle version info
         final URLConnection launcherJarConn = launcherJar.openConnection();
         launcherJarConn.setUseCaches(false);
-        final File tmp = new File(launchpadHome, "Loader_tmp_" + System.currentTimeMillis() + SharedConstants.LAUNCHER_JAR_REL_PATH);
+        final File tmp = new File(
+                launchpadHome, "Loader_tmp_" + System.currentTimeMillis() + SharedConstants.LAUNCHER_JAR_REL_PATH);
         spool(launcherJarConn.getInputStream(), tmp);
         final FileBundleVersionInfo newVi = new FileBundleVersionInfo(tmp);
         boolean installNewLauncher = true;
 
         try {
-            if(!newVi.isBundle()) {
+            if (!newVi.isBundle()) {
                 throw new IOException("New launcher jar is not a bundle, cannot get version info:" + launcherJar);
             }
 
             // Compare versions to decide whether to use the existing or new launcher jar
             if (currentLauncherJarFile.exists()) {
                 final FileBundleVersionInfo currentVi = new FileBundleVersionInfo(currentLauncherJarFile);
-                if(!currentVi.isBundle()) {
+                if (!currentVi.isBundle()) {
                     throw new IOException("Existing launcher jar is not a bundle, cannot get version info:"
                             + currentLauncherJarFile.getAbsolutePath());
                 }
 
                 String info = null;
-                if(currentVi.compareTo(newVi) == 0) {
+                if (currentVi.compareTo(newVi) == 0) {
                     info = "up to date";
                     installNewLauncher = false;
-                } else if(currentVi.compareTo(newVi) > 0) {
+                } else if (currentVi.compareTo(newVi) > 0) {
                     info = "more recent than ours";
                     installNewLauncher = false;
                 }
 
-                if(info != null) {
-                    info("Existing launcher is " + info + ", using it: "
-                            + getBundleInfo(currentVi) + " (" + currentLauncherJarFile.getName() + ")");
+                if (info != null) {
+                    info("Existing launcher is " + info + ", using it: " + getBundleInfo(currentVi) + " ("
+                            + currentLauncherJarFile.getName() + ")");
                 }
             }
 
-            if(installNewLauncher) {
-                final File f = new File(tmp.getParentFile(), SharedConstants.LAUNCHER_JAR_REL_PATH + "." + System.currentTimeMillis());
-                if(!tmp.renameTo(f)) {
+            if (installNewLauncher) {
+                final File f = new File(
+                        tmp.getParentFile(), SharedConstants.LAUNCHER_JAR_REL_PATH + "." + System.currentTimeMillis());
+                if (!tmp.renameTo(f)) {
                     throw new IOException("Failed to rename " + tmp.getName() + " to " + f.getName());
                 }
-                info("Installing new launcher: " + launcherJar  + ", " + getBundleInfo(newVi) + " (" + f.getName() + ")");
+                info("Installing new launcher: " + launcherJar + ", " + getBundleInfo(newVi) + " (" + f.getName()
+                        + ")");
             }
         } finally {
-            if(tmp.exists()) {
+            if (tmp.exists()) {
                 tmp.delete();
             }
         }
@@ -221,7 +219,7 @@ public class Loader {
     static String getBundleInfo(BundleVersionInfo<?> v) {
         final StringBuilder sb = new StringBuilder();
         sb.append(v.getVersion());
-        if(v.isSnapshot()) {
+        if (v.isSnapshot()) {
             sb.append(", Last-Modified:");
             sb.append(new Date(v.getBundleLastModified()));
         }
@@ -238,15 +236,15 @@ public class Loader {
 
             // Remove all files except current one
             final File current = getLauncherJarFile();
-            for(File f : launcherJars) {
-                if(f.getAbsolutePath().equals(current.getAbsolutePath())) {
+            for (File f : launcherJars) {
+                if (f.getAbsolutePath().equals(current.getAbsolutePath())) {
                     continue;
                 }
                 String versionInfo = null;
                 try {
                     FileBundleVersionInfo vi = new FileBundleVersionInfo(f);
                     versionInfo = getBundleInfo(vi);
-                } catch(IOException ignored) {
+                } catch (IOException ignored) {
                 }
                 info("Deleting obsolete launcher jar: " + f.getName() + ", " + versionInfo);
                 f.delete();
@@ -254,11 +252,9 @@ public class Loader {
 
             // And ensure the current file has the standard launcher name
             if (!SharedConstants.LAUNCHER_JAR_REL_PATH.equals(current.getName())) {
-                info("Renaming current launcher jar " + current.getName()
-                        + " to " + SharedConstants.LAUNCHER_JAR_REL_PATH);
-                File launcherFileName = new File(
-                        current.getParentFile(),
-                    SharedConstants.LAUNCHER_JAR_REL_PATH);
+                info("Renaming current launcher jar " + current.getName() + " to "
+                        + SharedConstants.LAUNCHER_JAR_REL_PATH);
+                File launcherFileName = new File(current.getParentFile(), SharedConstants.LAUNCHER_JAR_REL_PATH);
                 current.renameTo(launcherFileName);
             }
         }
@@ -311,8 +307,7 @@ public class Loader {
         if (launcherJars == null || launcherJars.length == 0) {
 
             // return a non-existing file naming the desired primary name
-            result = new File(launchpadHome,
-                SharedConstants.LAUNCHER_JAR_REL_PATH);
+            result = new File(launchpadHome, SharedConstants.LAUNCHER_JAR_REL_PATH);
 
         } else {
             // last file is the most recent one, use it
@@ -338,31 +333,30 @@ public class Loader {
         final File[] rawList = launchpadHome.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
-                return pathname.isFile()
-                    && pathname.getName().startsWith(
-                        SharedConstants.LAUNCHER_JAR_REL_PATH);
+                return pathname.isFile() && pathname.getName().startsWith(SharedConstants.LAUNCHER_JAR_REL_PATH);
             }
         });
 
         // Keep only those which have valid Bundle headers, and
         // sort them according to the bundle version numbers
         final List<FileBundleVersionInfo> list = new ArrayList<FileBundleVersionInfo>();
-        for(File f : rawList) {
+        for (File f : rawList) {
             FileBundleVersionInfo fvi = null;
             try {
                 fvi = new FileBundleVersionInfo(f);
-            } catch(IOException ioe) {
+            } catch (IOException ioe) {
                 // Cannot read bundle info from jar file - should never happen??
-                throw new IllegalStateException("Cannot read bundle information from loader file " + f.getAbsolutePath());
+                throw new IllegalStateException(
+                        "Cannot read bundle information from loader file " + f.getAbsolutePath());
             }
-            if(fvi.isBundle()) {
+            if (fvi.isBundle()) {
                 list.add(fvi);
             }
         }
         Collections.sort(list);
-        final File [] result = new File[list.size()];
+        final File[] result = new File[list.size()];
         int i = 0;
-        for(FileBundleVersionInfo fvi : list) {
+        for (FileBundleVersionInfo fvi : list) {
             result[i++] = fvi.getSource();
         }
         return result;
@@ -383,12 +377,10 @@ public class Loader {
     private static File getLaunchpadHomeFile(File launchpadHome) {
         if (launchpadHome.exists()) {
             if (!launchpadHome.isDirectory()) {
-                throw new IllegalArgumentException("Sling Home " + launchpadHome
-                    + " exists but is not a directory");
+                throw new IllegalArgumentException("Sling Home " + launchpadHome + " exists but is not a directory");
             }
         } else if (!launchpadHome.mkdirs()) {
-            throw new IllegalArgumentException("Sling Home " + launchpadHome
-                + " cannot be created as a directory");
+            throw new IllegalArgumentException("Sling Home " + launchpadHome + " cannot be created as a directory");
         }
 
         return launchpadHome;
@@ -408,25 +400,24 @@ public class Loader {
         }
     }
 
-    /** 
+    /**
      * Meant to be overridden to display or log info
      *
      * @param msg The message to display or log
      */
-    protected void info(String msg) {
-    }
+    protected void info(String msg) {}
 
-    private File getExtensionLibHome(){
-        //check if sling home is initialized
-        if(launchpadHome == null || !launchpadHome.exists()){
-            throw new IllegalArgumentException("Sling Home  has not been initialized" );
+    private File getExtensionLibHome() {
+        // check if sling home is initialized
+        if (launchpadHome == null || !launchpadHome.exists()) {
+            throw new IllegalArgumentException("Sling Home  has not been initialized");
         }
-        //assumes launchpadHome is initialized
-        File extLibFile=new File(launchpadHome, EXTENSION_LIB_PATH);
+        // assumes launchpadHome is initialized
+        File extLibFile = new File(launchpadHome, EXTENSION_LIB_PATH);
         if (extLibFile.exists()) {
             if (!extLibFile.isDirectory()) {
-                throw new IllegalArgumentException("Sling  Extension Lib Home " + extLibFile
-                        + " exists but is not a directory");
+                throw new IllegalArgumentException(
+                        "Sling  Extension Lib Home " + extLibFile + " exists but is not a directory");
             }
         }
 
@@ -434,10 +425,10 @@ public class Loader {
         return extLibFile;
     }
 
-    private File[] getExtLibs(){
+    private File[] getExtLibs() {
         if (extLibHome == null || !extLibHome.exists()) {
             info("External Libs Home (ext) is null or does not exists.");
-            return new File[]{};
+            return new File[] {};
         }
         File[] libs = extLibHome.listFiles(new FilenameFilter() {
             @Override
@@ -447,11 +438,11 @@ public class Loader {
         });
 
         if (libs == null) {
-            libs = new File[]{};
+            libs = new File[] {};
         }
         StringBuilder logStringBldr = new StringBuilder("Sling Extension jars found = [ ");
 
-        for(File lib:libs){
+        for (File lib : libs) {
             logStringBldr.append(lib);
             logStringBldr.append(",");
         }

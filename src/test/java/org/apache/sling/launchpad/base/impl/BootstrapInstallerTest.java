@@ -18,14 +18,15 @@
  */
 package org.apache.sling.launchpad.base.impl;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * Testing the bootstrap installer methods
@@ -83,7 +84,8 @@ public class BootstrapInstallerTest {
         filename = BootstrapInstaller.extractFileName("/things/myfile.html".replace('/', File.separatorChar));
         assertEquals("myfile.html", filename);
 
-        filename = BootstrapInstaller.extractFileName("LOTS/of/random/things/myfile.html".replace('/', File.separatorChar));
+        filename = BootstrapInstaller.extractFileName(
+                "LOTS/of/random/things/myfile.html".replace('/', File.separatorChar));
         assertEquals("myfile.html", filename);
 
         try {
@@ -121,8 +123,7 @@ public class BootstrapInstallerTest {
         testDir.deleteOnExit(); // cleanup
         assertTrue(testDir.mkdir());
 
-        stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(
-            "holaworld.jar");
+        stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("holaworld.jar");
         assertNotNull(stream); // cleanup
         to = new File(testDir, "test.jar");
         to.deleteOnExit();

@@ -28,7 +28,6 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 
-
 public class SlingServletDelegateTest {
 
     @Mock
@@ -63,7 +62,8 @@ public class SlingServletDelegateTest {
     public void testCalculateServletPackagesForVersion5() {
         String servletVersion = "5.0";
         int majorVersion = 5;
-        String expectedPackages = "jakarta.servlet;jakarta.servlet.http;jakarta.servlet.descriptor;jakarta.servlet.annotation;version=5.0";
+        String expectedPackages =
+                "jakarta.servlet;jakarta.servlet.http;jakarta.servlet.descriptor;jakarta.servlet.annotation;version=5.0";
 
         // Get the servlet packages
         String actualPackages = slingServletDelegate.calculateServletPackages(servletVersion, majorVersion);
@@ -75,13 +75,13 @@ public class SlingServletDelegateTest {
     public void testCalculateServletPackagesForVersion6() {
         String servletVersion = "6.0";
         int majorVersion = 6;
-        String expectedPackages = "jakarta.servlet;jakarta.servlet.http;jakarta.servlet.descriptor;jakarta.servlet.annotation;version=5.0"
-                + ",jakarta.servlet;jakarta.servlet.http;jakarta.servlet.descriptor;jakarta.servlet.annotation;version=6.0";
+        String expectedPackages =
+                "jakarta.servlet;jakarta.servlet.http;jakarta.servlet.descriptor;jakarta.servlet.annotation;version=5.0"
+                        + ",jakarta.servlet;jakarta.servlet.http;jakarta.servlet.descriptor;jakarta.servlet.annotation;version=6.0";
 
         // Get the servlet packages
         String actualPackages = slingServletDelegate.calculateServletPackages(servletVersion, majorVersion);
         // Verify
         assertEquals(expectedPackages, actualPackages);
     }
-
 }

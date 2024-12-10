@@ -28,10 +28,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import junit.framework.TestCase;
 import org.apache.sling.launchpad.base.shared.SharedConstants;
 import org.junit.Assert;
-
-import junit.framework.TestCase;
 
 public class ControlListenerTest extends TestCase {
 
@@ -143,12 +142,12 @@ public class ControlListenerTest extends TestCase {
                         Thread.sleep(50);
                     } catch (InterruptedException ie) {
                     }
-                    synchronized(l2) {
+                    synchronized (l2) {
                         System.out.println(Thread.currentThread().getName() + ": locked l2");
                     }
                 }
             } else {
-                synchronized(l2) {
+                synchronized (l2) {
                     try {
                         Thread.sleep(50);
                     } catch (InterruptedException ie) {
@@ -351,7 +350,7 @@ public class ControlListenerTest extends TestCase {
         }
     }
 
-    //-------------------- private section -----------------------------
+    // -------------------- private section -----------------------------
 
     private int getPort() {
         ServerSocket s = null;

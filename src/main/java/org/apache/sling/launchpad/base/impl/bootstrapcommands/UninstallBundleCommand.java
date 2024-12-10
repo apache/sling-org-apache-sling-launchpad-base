@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.felix.framework.Logger;
-import org.osgi.framework.VersionRange;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
+import org.osgi.framework.VersionRange;
 import org.osgi.framework.wiring.FrameworkWiring;
 
 /**
@@ -71,7 +71,7 @@ class UninstallBundleCommand implements Command {
      * Gets the bundle's Fragment-Host header.
      */
     private static String getFragmentHostHeader(final Bundle b) {
-        return b.getHeaders().get( Constants.FRAGMENT_HOST );
+        return b.getHeaders().get(Constants.FRAGMENT_HOST);
     }
 
     /**
@@ -95,38 +95,39 @@ class UninstallBundleCommand implements Command {
         final Set<String> refreshBundles = new HashSet<String>();
         // Uninstall all instances of our bundle within our version range
         boolean refreshSystemBundle = false;
-        for(final Bundle b : ctx.getBundles()) {
+        for (final Bundle b : ctx.getBundles()) {
             if (b.getSymbolicName().equals(bundleSymbolicName)) {
                 if (versionRange == null || versionRange.includes(b.getVersion())) {
-                    logger.log(Logger.LOG_INFO,
-                            this + ": uninstalling bundle version " + b.getVersion());
+                    logger.log(Logger.LOG_INFO, this + ": uninstalling bundle version " + b.getVersion());
                     final String fragmentHostHeader = getFragmentHostHeader(b);
                     if (fragmentHostHeader != null) {
-                        if ( isSystemBundleFragment(fragmentHostHeader) ) {
+                        if (isSystemBundleFragment(fragmentHostHeader)) {
                             logger.log(Logger.LOG_INFO, this + ": Need to do a system bundle refresh");
                             refreshSystemBundle = true;
                         } else {
-                            logger.log(Logger.LOG_INFO, this + ": Need to do a refresh of the bundle's host: " + fragmentHostHeader);
+                            logger.log(
+                                    Logger.LOG_INFO,
+                                    this + ": Need to do a refresh of the bundle's host: " + fragmentHostHeader);
                             refreshBundles.add(fragmentHostHeader);
                         }
                     }
 
                     b.uninstall();
                 } else {
-                    logger.log(Logger.LOG_INFO,
-                            this + ": bundle version (" + b.getVersion()+ " not in range, ignored");
+                    logger.log(
+                            Logger.LOG_INFO, this + ": bundle version (" + b.getVersion() + " not in range, ignored");
                 }
             }
         }
-        if ( refreshBundles.size() > 0 ) {
+        if (refreshBundles.size() > 0) {
             final List<Bundle> bundles = new ArrayList<Bundle>();
-            for(final Bundle b : ctx.getBundles() ) {
-                if ( refreshBundles.contains(b.getSymbolicName()) ) {
+            for (final Bundle b : ctx.getBundles()) {
+                if (refreshBundles.contains(b.getSymbolicName())) {
                     logger.log(Logger.LOG_INFO, this + ": Found host bundle to refresh " + b.getBundleId());
                     bundles.add(b);
                 }
             }
-            if ( bundles.size() > 0 ) {
+            if (bundles.size() > 0) {
                 final FrameworkWiring fw = ctx.getBundle().adapt(FrameworkWiring.class);
                 fw.refreshBundles(bundles);
             }
@@ -136,11 +137,11 @@ class UninstallBundleCommand implements Command {
 
     @Override
     public Command parse(String commandLine) throws ParseException {
-        if(commandLine.startsWith(CMD_PREFIX)) {
-            final String [] s = commandLine.split(" ");
+        if (commandLine.startsWith(CMD_PREFIX)) {
+            final String[] s = commandLine.split(" ");
             if (s.length == 3) {
                 return new UninstallBundleCommand(s[1].trim(), s[2].trim());
-            } else if ( s.length == 2 ) {
+            } else if (s.length == 2) {
                 return new UninstallBundleCommand(s[1].trim());
             }
             throw new Command.ParseException("Syntax error: '" + commandLine + "'");

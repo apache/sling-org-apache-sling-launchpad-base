@@ -64,14 +64,13 @@ public class StartupManager {
 
     private final boolean incrementalStartupEnabled;
 
-    StartupManager(final Map<String, String> properties,
-                   final Logger logger) {
+    StartupManager(final Map<String, String> properties, final Logger logger) {
         this.logger = logger;
         this.startupDir = DirectoryUtil.getStartupDir(properties);
         this.confDir = DirectoryUtil.getConfigDir(properties);
         // check for override property
         final String overrideMode = System.getProperty(OVERRIDE_PROP, properties.get(OVERRIDE_PROP));
-        if ( overrideMode != null ) {
+        if (overrideMode != null) {
             this.mode = StartupMode.valueOf(overrideMode.toUpperCase());
             this.logger.log(Logger.LOG_INFO, "Override property set. Starting in mode " + this.mode);
         } else {
@@ -82,17 +81,22 @@ public class StartupManager {
         // populate the sling target start level from the framework one, if not set,
         // otherwise overwrite the framework one
         if (!properties.containsKey(SharedConstants.SLING_INSTALL_TARGETSTARTLEVEL)) {
-            properties.put(SharedConstants.SLING_INSTALL_TARGETSTARTLEVEL, properties.get(Constants.FRAMEWORK_BEGINNING_STARTLEVEL));
+            properties.put(
+                    SharedConstants.SLING_INSTALL_TARGETSTARTLEVEL,
+                    properties.get(Constants.FRAMEWORK_BEGINNING_STARTLEVEL));
         } else {
-            properties.put(Constants.FRAMEWORK_BEGINNING_STARTLEVEL, properties.get(SharedConstants.SLING_INSTALL_TARGETSTARTLEVEL));
+            properties.put(
+                    Constants.FRAMEWORK_BEGINNING_STARTLEVEL,
+                    properties.get(SharedConstants.SLING_INSTALL_TARGETSTARTLEVEL));
         }
 
         this.targetStartLevel = Long.valueOf(properties.get(Constants.FRAMEWORK_BEGINNING_STARTLEVEL));
 
-        this.incrementalStartupEnabled = Boolean.valueOf(properties.get(SharedConstants.SLING_INSTALL_INCREMENTAL_START));
+        this.incrementalStartupEnabled =
+                Boolean.valueOf(properties.get(SharedConstants.SLING_INSTALL_INCREMENTAL_START));
 
         // if this is not a restart, reduce start level
-        if ( this.mode != StartupMode.RESTART && this.incrementalStartupEnabled ) {
+        if (this.mode != StartupMode.RESTART && this.incrementalStartupEnabled) {
             final String startLevel = properties.get(SharedConstants.SLING_INSTALL_STARTLEVEL);
             properties.put(Constants.FRAMEWORK_BEGINNING_STARTLEVEL, startLevel != null ? startLevel : "10");
         }
@@ -152,12 +156,14 @@ public class StartupManager {
                 return StartupMode.RESTART;
 
             } catch (final IOException ioe) {
-                logger.log(Logger.LOG_ERROR,
-                    "IOException during reading of installed flag.", ioe);
+                logger.log(Logger.LOG_ERROR, "IOException during reading of installed flag.", ioe);
 
             } finally {
                 if (fis != null) {
-                    try { fis.close(); } catch (IOException ignore) {}
+                    try {
+                        fis.close();
+                    } catch (IOException ignore) {
+                    }
                 }
             }
         } else {
@@ -167,7 +173,7 @@ public class StartupManager {
             // versions did use Felix this is fine.
             final File felixDir = new File(osgiStorageDir);
             final File oldFile = new File(felixDir, OLD_DATA_FILE);
-            if ( oldFile.exists() ) {
+            if (oldFile.exists()) {
                 // this is an update - remove old file
                 oldFile.delete();
                 return StartupMode.UPDATE;
@@ -187,11 +193,14 @@ public class StartupManager {
         if (url != null) {
             try {
                 final long stamp = url.openConnection().getLastModified();
-                if ( stamp > selfStamp ) {
-                    logger.log(Logger.LOG_INFO, String.format("Newer timestamp for %s from %s : %s", clazz.getName(), url, selfStamp));
+                if (stamp > selfStamp) {
+                    logger.log(
+                            Logger.LOG_INFO,
+                            String.format("Newer timestamp for %s from %s : %s", clazz.getName(), url, selfStamp));
                     timeStamp = stamp;
                 }
-            } catch (final IOException ignore) {}
+            } catch (final IOException ignore) {
+            }
         }
         return timeStamp;
     }
@@ -220,16 +229,18 @@ public class StartupManager {
 
         // check whether any bundle is younger than the launcher jar
         final File[] directories = this.startupDir.listFiles(DirectoryUtil.DIRECTORY_FILTER);
-        if ( directories != null ) {
+        if (directories != null) {
             for (final File levelDir : directories) {
 
                 // iterate through all files in the startlevel dir
                 final File[] jarFiles = levelDir.listFiles(DirectoryUtil.BUNDLE_FILE_FILTER);
-                if ( jarFiles != null ) {
+                if (jarFiles != null) {
                     for (final File bundleJar : jarFiles) {
                         if (bundleJar.lastModified() > selfStamp) {
                             selfStamp = bundleJar.lastModified();
-                            logger.log(Logger.LOG_INFO, String.format("Newer timestamp from %s : %s", bundleJar, selfStamp));
+                            logger.log(
+                                    Logger.LOG_INFO,
+                                    String.format("Newer timestamp from %s : %s", bundleJar, selfStamp));
                         }
                     }
                 }
@@ -254,11 +265,13 @@ public class StartupManager {
             try {
                 fos.write(String.valueOf(System.currentTimeMillis()));
             } finally {
-                try { fos.close(); } catch (final IOException ignore) {}
+                try {
+                    fos.close();
+                } catch (final IOException ignore) {
+                }
             }
         } catch (final IOException ioe) {
-            logger.log(Logger.LOG_ERROR,
-                "IOException during writing of installed flag.", ioe);
+            logger.log(Logger.LOG_ERROR, "IOException during writing of installed flag.", ioe);
         }
     }
 }

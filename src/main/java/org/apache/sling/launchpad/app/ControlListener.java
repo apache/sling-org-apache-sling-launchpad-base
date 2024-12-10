@@ -181,10 +181,12 @@ class ControlListener implements Runnable {
         try {
             server = new ServerSocket();
             server.bind(this.socketAddress);
-            writePortToConfigFile(getConfigFile(),
-                new InetSocketAddress(server.getInetAddress(), server.getLocalPort()), this.secretKey);
-            Thread.currentThread().setName(
-                "Apache Sling Control Listener@" + server.getInetAddress() + ":" + server.getLocalPort());
+            writePortToConfigFile(
+                    getConfigFile(),
+                    new InetSocketAddress(server.getInetAddress(), server.getLocalPort()),
+                    this.secretKey);
+            Thread.currentThread()
+                    .setName("Apache Sling Control Listener@" + server.getInetAddress() + ":" + server.getLocalPort());
             Main.info("Apache Sling Control Listener started", null);
         } catch (final IOException ioe) {
             Main.error("Failed to start Apache Sling Control Listener", ioe);
@@ -273,7 +275,6 @@ class ControlListener implements Runnable {
                     } else {
                         final String msg = "ERR:" + command;
                         writeLine(s, msg);
-
                     }
                 } finally {
                     try {
@@ -316,12 +317,11 @@ class ControlListener implements Runnable {
             writeLine(socket, "-   Locked ownable synchronizers:");
             if (locks.length > 0) {
                 for (LockInfo li : locks) {
-                    writeLine(socket, String.format("-        - locked %s",
-                        formatLockInfo(
-                            li.getClassName(),
-                            li.getIdentityHashCode()
-                        )
-                    ));
+                    writeLine(
+                            socket,
+                            String.format(
+                                    "-        - locked %s",
+                                    formatLockInfo(li.getClassName(), li.getIdentityHashCode())));
                 }
             } else {
                 writeLine(socket, "-        - None");
@@ -362,20 +362,19 @@ class ControlListener implements Runnable {
                     writeLine(socket, "-Found one Java-level deadlock:");
                     writeLine(socket, "-=============================");
                     for (ThreadInfo thread : loop) {
-                        writeLine(socket, String.format("-\"%s\" #%d",
-                            thread.getThreadName(),
-                            thread.getThreadId()
-                        ));
-                        writeLine(socket, String.format("-  waiting on %s",
-                            formatLockInfo(
-                                thread.getLockInfo().getClassName(),
-                                thread.getLockInfo().getIdentityHashCode()
-                            )
-                        ));
-                        writeLine(socket, String.format("-  which is held by \"%s\" #%d",
-                            thread.getLockOwnerName(),
-                            thread.getLockOwnerId()
-                        ));
+                        writeLine(socket, String.format("-\"%s\" #%d", thread.getThreadName(), thread.getThreadId()));
+                        writeLine(
+                                socket,
+                                String.format(
+                                        "-  waiting on %s",
+                                        formatLockInfo(
+                                                thread.getLockInfo().getClassName(),
+                                                thread.getLockInfo().getIdentityHashCode())));
+                        writeLine(
+                                socket,
+                                String.format(
+                                        "-  which is held by \"%s\" #%d",
+                                        thread.getLockOwnerName(), thread.getLockOwnerId()));
                     }
                     writeLine(socket, "-");
 
@@ -389,16 +388,14 @@ class ControlListener implements Runnable {
                 }
             }
 
-//            "Thread-8":
-//                waiting to lock monitor 7f89fb80da08 (object 7f37a0968, a java.lang.Object),
-//                which is held by "Thread-7"
-//              "Thread-7":
-//                waiting to lock monitor 7f89fb80b0b0 (object 7f37a0958, a java.lang.Object),
-//                which is held by "Thread-8"
+            //            "Thread-8":
+            //                waiting to lock monitor 7f89fb80da08 (object 7f37a0968, a java.lang.Object),
+            //                which is held by "Thread-7"
+            //              "Thread-7":
+            //                waiting to lock monitor 7f89fb80b0b0 (object 7f37a0958, a java.lang.Object),
+            //                which is held by "Thread-8"
 
-            writeLine(socket, String.format("-Found %d deadlocks.",
-                deadlockCount
-            ));
+            writeLine(socket, String.format("-Found %d deadlocks.", deadlockCount));
         }
 
         writeLine(socket, RESPONSE_OK);
@@ -409,55 +406,48 @@ class ControlListener implements Runnable {
     }
 
     private void printThread(final Socket socket, final ThreadInfo thread) throws IOException {
-        writeLine(socket, String.format("-\"%s\" #%d",
-            thread.getThreadName(),
-            thread.getThreadId()
-        ));
+        writeLine(socket, String.format("-\"%s\" #%d", thread.getThreadName(), thread.getThreadId()));
 
-        writeLine(socket, String.format("-    java.lang.Thread.State: %s",
-            thread.getThreadState()
-        ));
+        writeLine(socket, String.format("-    java.lang.Thread.State: %s", thread.getThreadState()));
 
         final MonitorInfo[] monitors = thread.getLockedMonitors();
         final StackTraceElement[] trace = thread.getStackTrace();
-        for (int i=0; i < trace.length; i++) {
+        for (int i = 0; i < trace.length; i++) {
             StackTraceElement ste = trace[i];
             if (ste.isNativeMethod()) {
-                writeLine(socket, String.format("-        at %s.%s(Native Method)",
-                    ste.getClassName(),
-                    ste.getMethodName()
-                ));
+                writeLine(
+                        socket,
+                        String.format("-        at %s.%s(Native Method)", ste.getClassName(), ste.getMethodName()));
             } else {
-                writeLine(socket, String.format("-        at %s.%s(%s:%d)",
-                    ste.getClassName(),
-                    ste.getMethodName(),
-                    ste.getFileName(),
-                    ste.getLineNumber()
-                ));
+                writeLine(
+                        socket,
+                        String.format(
+                                "-        at %s.%s(%s:%d)",
+                                ste.getClassName(), ste.getMethodName(), ste.getFileName(), ste.getLineNumber()));
             }
 
             if (i == 0 && thread.getLockInfo() != null) {
-                writeLine(socket, String.format("-        - waiting on %s%s",
-                    formatLockInfo(
-                        thread.getLockInfo().getClassName(),
-                        thread.getLockInfo().getIdentityHashCode()
-                    ),
-                    (thread.getLockOwnerId() >= 0)
-                        ? String.format(" owned by \"%s\" #%d",
-                            thread.getLockOwnerName(),
-                            thread.getLockOwnerId()
-                        ):""
-                ));
+                writeLine(
+                        socket,
+                        String.format(
+                                "-        - waiting on %s%s",
+                                formatLockInfo(
+                                        thread.getLockInfo().getClassName(),
+                                        thread.getLockInfo().getIdentityHashCode()),
+                                (thread.getLockOwnerId() >= 0)
+                                        ? String.format(
+                                                " owned by \"%s\" #%d",
+                                                thread.getLockOwnerName(), thread.getLockOwnerId())
+                                        : ""));
             }
 
             for (MonitorInfo mi : monitors) {
                 if (i == mi.getLockedStackDepth()) {
-                    writeLine(socket, String.format("-        - locked %s",
-                        formatLockInfo(
-                            mi.getClassName(),
-                            mi.getIdentityHashCode()
-                        )
-                    ));
+                    writeLine(
+                            socket,
+                            String.format(
+                                    "-        - locked %s",
+                                    formatLockInfo(mi.getClassName(), mi.getIdentityHashCode())));
                 }
             }
         }
@@ -506,8 +496,7 @@ class ControlListener implements Runnable {
     }
 
     private String readLine(final Socket socket) throws IOException {
-        final BufferedReader br = new BufferedReader(new InputStreamReader(
-            socket.getInputStream(), "UTF-8"));
+        final BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
 
         StringBuilder b = new StringBuilder();
         boolean more = true;
@@ -548,7 +537,7 @@ class ControlListener implements Runnable {
         if (fromConfigFile) {
             final File configFile = this.getConfigFile();
             if (configFile.canRead()) {
-                try ( final LineNumberReader lnr = new LineNumberReader(new FileReader(configFile))) {
+                try (final LineNumberReader lnr = new LineNumberReader(new FileReader(configFile))) {
                     this.socketAddress = getSocketAddress(lnr.readLine());
                     this.secretKey = lnr.readLine();
                     result = true;
@@ -566,7 +555,7 @@ class ControlListener implements Runnable {
     }
 
     public static String generateKey() {
-         return new BigInteger(165, new SecureRandom()).toString(32);
+        return new BigInteger(165, new SecureRandom()).toString(32);
     }
 
     /**
@@ -603,15 +592,14 @@ class ControlListener implements Runnable {
 
             Main.error("Unknown host in '" + listenSpec, null);
         } catch (final NumberFormatException nfe) {
-            Main.error("Cannot parse port number from '" + listenSpec + "'",
-                null);
+            Main.error("Cannot parse port number from '" + listenSpec + "'", null);
         }
 
         return null;
     }
 
-    private static void writePortToConfigFile(final File configFile, final InetSocketAddress socketAddress,
-            final String secretKey) {
+    private static void writePortToConfigFile(
+            final File configFile, final InetSocketAddress socketAddress, final String secretKey) {
         configFile.getParentFile().mkdirs();
         FileWriter fw = null;
         try {

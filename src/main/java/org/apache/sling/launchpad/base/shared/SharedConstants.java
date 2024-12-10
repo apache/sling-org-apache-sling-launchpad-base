@@ -59,7 +59,8 @@ public interface SharedConstants {
      * HttpSessionAttributeListener interfaces to which the respective events
      * are forwarded.
      */
-    public static final String DEFAULT_SLING_LISTENER = "org.apache.sling.launchpad.base.webapp.SlingHttpSessionListenerDelegate";
+    public static final String DEFAULT_SLING_LISTENER =
+            "org.apache.sling.launchpad.base.webapp.SlingHttpSessionListenerDelegate";
 
     /**
      * The name of the file providing the Launcher JAR. On the one hand this is
@@ -73,8 +74,7 @@ public interface SharedConstants {
      * The absolute path to the launcher JAR file in the archive to copy to the
      * sling.home directory.
      */
-    public static final String DEFAULT_SLING_LAUNCHER_JAR = "/resources/"
-        + LAUNCHER_JAR_REL_PATH;
+    public static final String DEFAULT_SLING_LAUNCHER_JAR = "/resources/" + LAUNCHER_JAR_REL_PATH;
 
     /**
      * True or false value which controls whether sling will load bundles which
@@ -82,7 +82,8 @@ public interface SharedConstants {
      * The default is to unpack the jars and deploy them to the startup folder
      * in sling home
      */
-    public static final String DISABLE_PACKAGE_BUNDLE_LOADING = "org.apache.sling.launchpad.disable.package.bundle.loading";
+    public static final String DISABLE_PACKAGE_BUNDLE_LOADING =
+            "org.apache.sling.launchpad.disable.package.bundle.loading";
 
     /**
      * True or false value which controls whether sling will load bundles which
@@ -90,7 +91,6 @@ public interface SharedConstants {
      * regardless of the modification time of the Launchpad JAR.
      */
     public static final String FORCE_PACKAGE_BUNDLE_LOADING = "org.apache.sling.launchpad.force.package.bundle.loading";
-
 
     /**
      * The name of the configuration property defining the Sling properties file

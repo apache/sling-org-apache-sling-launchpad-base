@@ -22,9 +22,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Test;
-
 import junit.framework.TestCase;
+import org.junit.Test;
 
 public class UtilTest {
 
@@ -41,32 +40,38 @@ public class UtilTest {
     @Test
     public void test_substVars_no_replacement() {
         TestCase.assertEquals("foo", Util.substVars("foo", "the_foo", null, properties));
-        TestCase.assertEquals("%d{yyyy-MM-dd} %t{short} %m", Util.substVars("%d{yyyy-MM-dd} %t{short} %m", "the_foo", null, properties));
+        TestCase.assertEquals(
+                "%d{yyyy-MM-dd} %t{short} %m",
+                Util.substVars("%d{yyyy-MM-dd} %t{short} %m", "the_foo", null, properties));
     }
 
     @Test
     public void test_substVars_single_replacement() {
         TestCase.assertEquals("_v_foo_", Util.substVars("${foo}", "the_foo", null, properties));
-        TestCase.assertEquals("leading _v_foo_ trailing", Util.substVars("leading ${foo} trailing", "the_foo", null, properties));
-        TestCase.assertEquals("leading _v_foo_ middle _v_baz_ trailing",
-            Util.substVars("leading ${foo} middle ${baz} trailing", "the_foo", null, properties));
+        TestCase.assertEquals(
+                "leading _v_foo_ trailing", Util.substVars("leading ${foo} trailing", "the_foo", null, properties));
+        TestCase.assertEquals(
+                "leading _v_foo_ middle _v_baz_ trailing",
+                Util.substVars("leading ${foo} middle ${baz} trailing", "the_foo", null, properties));
     }
 
     @Test
     public void test_substVars_nested_replacement() {
-        TestCase.assertEquals("leading _v_foo.bar_ middle _v_baz_ trailing",
-            Util.substVars("leading ${foo.${bar}} middle ${baz} trailing", "the_foo", null, properties));
+        TestCase.assertEquals(
+                "leading _v_foo.bar_ middle _v_baz_ trailing",
+                Util.substVars("leading ${foo.${bar}} middle ${baz} trailing", "the_foo", null, properties));
     }
 
     @Test
     public void test_substVars_missing_replacement() {
         System.setProperty("foobar", "_v_foobar_");
         System.clearProperty("foobaz");
-        TestCase.assertEquals("leading _v_foobar_ middle  trailing",
-            Util.substVars("leading ${foobar} middle ${foobaz} trailing", "the_foo", null, properties));
+        TestCase.assertEquals(
+                "leading _v_foobar_ middle  trailing",
+                Util.substVars("leading ${foobar} middle ${foobaz} trailing", "the_foo", null, properties));
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void test_substVars_recursive_failure() {
         Util.substVars("leading ${foo} middle ${baz} trailing", "foo", null, properties);
     }

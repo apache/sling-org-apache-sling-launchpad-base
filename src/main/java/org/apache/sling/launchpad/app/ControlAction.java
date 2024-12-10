@@ -47,5 +47,4 @@ public enum ControlAction {
      * listener and ask for a thread dump.
      */
     THREADS;
-
 }
