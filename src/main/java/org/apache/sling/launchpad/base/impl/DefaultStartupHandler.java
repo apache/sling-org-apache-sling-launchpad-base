@@ -59,8 +59,7 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
  * @since 2.4.0
  */
 @SuppressWarnings("deprecation")
-public class DefaultStartupHandler
-    implements StartupHandler, BundleListener, FrameworkListener, Runnable {
+public class DefaultStartupHandler implements StartupHandler, BundleListener, FrameworkListener, Runnable {
 
     /** Logger. */
     private final Logger logger;
@@ -116,10 +115,8 @@ public class DefaultStartupHandler
      * @param manager The startup manager
      * @param startedAt The started time
      */
-    public DefaultStartupHandler(final BundleContext context,
-            final Logger logger,
-            final StartupManager manager,
-            final long startedAt) {
+    public DefaultStartupHandler(
+            final BundleContext context, final Logger logger, final StartupManager manager, final long startedAt) {
         this.logger = logger;
         this.bundleContext = context;
         this.startedAt = startedAt;
@@ -130,20 +127,22 @@ public class DefaultStartupHandler
         StartupListener listener = null;
         try {
             listener = new MBeanStartupListener();
-        } catch ( final Exception ignore ) {
+        } catch (final Exception ignore) {
             // ignore
         }
         this.mbeanStartupListener = listener;
-        this.listenerTracker = new ServiceTracker<>(context, StartupListener.class,
-                new ServiceTrackerCustomizer<StartupListener, StartupListener>() {
+        this.listenerTracker = new ServiceTracker<>(
+                context, StartupListener.class, new ServiceTrackerCustomizer<StartupListener, StartupListener>() {
 
                     @Override
-                    public void removedService(final ServiceReference<StartupListener> reference, final StartupListener service) {
+                    public void removedService(
+                            final ServiceReference<StartupListener> reference, final StartupListener service) {
                         context.ungetService(reference);
                     }
 
                     @Override
-                    public void modifiedService(final ServiceReference<StartupListener> reference, final StartupListener service) {
+                    public void modifiedService(
+                            final ServiceReference<StartupListener> reference, final StartupListener service) {
                         // nothing to do
                     }
 
@@ -161,12 +160,13 @@ public class DefaultStartupHandler
                     }
                 });
         this.listenerTracker.open();
-        this.startLevelService = (StartLevel)context.getService(context.getServiceReference(StartLevel.class.getName()));
+        this.startLevelService =
+                (StartLevel) context.getService(context.getServiceReference(StartLevel.class.getName()));
         context.addFrameworkListener(this);
 
         this.useIncremental = this.startupMode != StartupMode.RESTART && manager.isIncrementalStartupEnabled();
 
-        if ( !this.useIncremental ) {
+        if (!this.useIncremental) {
             final Bundle[] bundles = context.getBundles();
             this.expectedBundlesCount = (bundles != null && bundles.length > 0 ? bundles.length : 10);
 
@@ -176,8 +176,10 @@ public class DefaultStartupHandler
         }
 
         this.bundleContext.registerService(StartupHandler.class.getName(), this, null);
-        this.log(Logger.LOG_INFO, "Started startup handler with target start level="
-               + String.valueOf(this.targetStartLevel) + ", and expected bundle count=" + String.valueOf(this.expectedBundlesCount));
+        this.log(
+                Logger.LOG_INFO,
+                "Started startup handler with target start level=" + String.valueOf(this.targetStartLevel)
+                        + ", and expected bundle count=" + String.valueOf(this.expectedBundlesCount));
         final Thread t = new Thread(this);
         t.start();
     }
@@ -203,22 +205,22 @@ public class DefaultStartupHandler
      */
     @Override
     public void run() {
-        while ( !this.finished.get() ) {
+        while (!this.finished.get()) {
             Boolean doInc = null;
             try {
                 doInc = this.queue.take();
             } catch (final InterruptedException e) {
                 // ignore
             }
-            if ( doInc != null && doInc ) {
+            if (doInc != null && doInc) {
                 // if the installer is idle we first wait
                 // we have to do this to give the installer or plugins for the installer,
                 // time to start after the start level has changed
-                if ( this.startupShouldWait.get() == 0 ) {
+                if (this.startupShouldWait.get() == 0) {
                     this.sleep(2000L);
                 }
                 // now we wait until the installer is idle
-                while ( this.startupShouldWait.get() != 0 ) {
+                while (this.startupShouldWait.get() != 0) {
                     this.sleep(50L);
                 }
                 this.incStartLevel();
@@ -241,7 +243,7 @@ public class DefaultStartupHandler
     @Override
     public void waitWithStartup(final boolean flag) {
         this.log(Logger.LOG_DEBUG, "Wait with startup " + flag);
-        if ( flag ) {
+        if (flag) {
             this.startupShouldWait.incrementAndGet();
         } else {
             this.startupShouldWait.decrementAndGet();
@@ -255,7 +257,7 @@ public class DefaultStartupHandler
     private void sleep(final long time) {
         try {
             Thread.sleep(time);
-        } catch ( final InterruptedException e) {
+        } catch (final InterruptedException e) {
             // ignore
         }
     }
@@ -277,29 +279,31 @@ public class DefaultStartupHandler
      */
     @Override
     public void frameworkEvent(final FrameworkEvent event) {
-        if ( finished.get() ) {
+        if (finished.get()) {
             return;
         }
         this.log(Logger.LOG_DEBUG, "Received framework event " + event);
 
-        if ( !this.useIncremental ) {
+        if (!this.useIncremental) {
             // restart
-            if ( event.getType() == FrameworkEvent.STARTED ) {
+            if (event.getType() == FrameworkEvent.STARTED) {
                 this.startupFinished();
             }
 
         } else {
             // first startup or update
-            if ( event.getType() == FrameworkEvent.STARTED ) {
+            if (event.getType() == FrameworkEvent.STARTED) {
                 this.enqueue(true);
 
-            } else if ( event.getType() == FrameworkEvent.STARTLEVEL_CHANGED ) {
-                if ( this.startLevelService.getStartLevel() >= this.targetStartLevel ) {
+            } else if (event.getType() == FrameworkEvent.STARTLEVEL_CHANGED) {
+                if (this.startLevelService.getStartLevel() >= this.targetStartLevel) {
                     this.startupFinished();
                 } else {
                     this.enqueue(true);
                     final int startLevel = this.startLevelService.getStartLevel();
-                    this.log(Logger.LOG_DEBUG, "Startup progress " + String.valueOf(startLevel) + '/' + String.valueOf(targetStartLevel));
+                    this.log(
+                            Logger.LOG_DEBUG,
+                            "Startup progress " + String.valueOf(startLevel) + '/' + String.valueOf(targetStartLevel));
                     final float ratio = (float) startLevel / (float) targetStartLevel;
                     this.startupProgress(ratio);
                 }
@@ -317,29 +321,25 @@ public class DefaultStartupHandler
 
     private void log(final ServiceReference<?> sRef, final int level, final String msg, final Throwable t) {
         boolean loggedWithService = false;
-        if ( this.logService == null ) {
+        if (this.logService == null) {
             final ServiceReference<?> ref = this.bundleContext.getServiceReference("org.osgi.service.log.LogService");
-            if ( ref != null ) {
+            if (ref != null) {
                 final Object ls = this.bundleContext.getService(ref);
-                if ( ls != null ) {
-                    final Class<?>[] formalParams = {
-                            ServiceReference.class,
-                            Integer.TYPE,
-                            String.class,
-                            Throwable.class
-                        };
+                if (ls != null) {
+                    final Class<?>[] formalParams = {ServiceReference.class, Integer.TYPE, String.class, Throwable.class
+                    };
 
                     try {
                         final Method logMethod = ls.getClass().getMethod("log", formalParams);
                         logMethod.setAccessible(true);
-                        logService = new Object[] { ls, logMethod };
+                        logService = new Object[] {ls, logMethod};
                     } catch (final NoSuchMethodException ex) {
                         // no need to log
                     }
                 }
             }
         }
-        if ( this.logService != null ) {
+        if (this.logService != null) {
             final Object[] params = {sRef, new Integer(level), msg, t};
             try {
                 ((Method) this.logService[1]).invoke(this.logService[0], params);
@@ -350,7 +350,7 @@ public class DefaultStartupHandler
                 // no need to log
             }
         }
-        if ( !loggedWithService ) {
+        if (!loggedWithService) {
             logger.log(level, msg);
         }
     }
@@ -359,7 +359,9 @@ public class DefaultStartupHandler
      * Notify finished startup
      */
     private void startupFinished() {
-        this.log(Logger.LOG_INFO, "Startup finished in " + String.valueOf(System.currentTimeMillis() - this.startedAt) + "ms");
+        this.log(
+                Logger.LOG_INFO,
+                "Startup finished in " + String.valueOf(System.currentTimeMillis() - this.startedAt) + "ms");
         this.finished.set(true);
 
         for (final StartupListener listener : this.listenerTracker.getServices(new StartupListener[0])) {
@@ -369,7 +371,7 @@ public class DefaultStartupHandler
                 this.log(Logger.LOG_ERROR, "Error calling StartupListener " + listener, t);
             }
         }
-        if ( this.mbeanStartupListener != null ) {
+        if (this.mbeanStartupListener != null) {
             this.mbeanStartupListener.startupFinished(this.startupMode);
         }
 
@@ -380,7 +382,7 @@ public class DefaultStartupHandler
         this.activeBundles.clear();
 
         // unregister listeners
-        if ( !this.useIncremental ) {
+        if (!this.useIncremental) {
             this.bundleContext.removeBundleListener(this);
         }
         this.bundleContext.removeFrameworkListener(this);
@@ -390,14 +392,16 @@ public class DefaultStartupHandler
         serviceProps.put(StartupMode.class.getName(), this.startupMode.name());
         serviceProps.put(Constants.SERVICE_DESCRIPTION, "Apache Sling Startup Service");
         serviceProps.put(Constants.SERVICE_VENDOR, "The Apache Software Foundation");
-        this.bundleContext.registerService(StartupService.class, new StartupService() {
+        this.bundleContext.registerService(
+                StartupService.class,
+                new StartupService() {
 
-            @Override
-            public StartupMode getStartupMode() {
-                return startupMode;
-            }
-
-            }, serviceProps);
+                    @Override
+                    public StartupMode getStartupMode() {
+                        return startupMode;
+                    }
+                },
+                serviceProps);
 
         // update timestamp
         this.startupManager.markInstalled();
@@ -415,7 +419,7 @@ public class DefaultStartupHandler
                 this.log(Logger.LOG_ERROR, "Error calling StartupListener " + listener, t);
             }
         }
-        if ( this.mbeanStartupListener != null ) {
+        if (this.mbeanStartupListener != null) {
             this.mbeanStartupListener.startupProgress(ratio);
         }
     }
@@ -432,7 +436,10 @@ public class DefaultStartupHandler
                 // Add (if not existing) bundle to active bundles and refresh progress bar
                 activeBundles.add(event.getBundle().getSymbolicName());
 
-                this.log(Logger.LOG_DEBUG, "Startup progress " + String.valueOf(activeBundles.size()) + '/' + String.valueOf(expectedBundlesCount));
+                this.log(
+                        Logger.LOG_DEBUG,
+                        "Startup progress " + String.valueOf(activeBundles.size()) + '/'
+                                + String.valueOf(expectedBundlesCount));
                 final float ratio = (float) activeBundles.size() / (float) expectedBundlesCount;
                 this.startupProgress(ratio);
             } else if (event.getType() == BundleEvent.STOPPED) {

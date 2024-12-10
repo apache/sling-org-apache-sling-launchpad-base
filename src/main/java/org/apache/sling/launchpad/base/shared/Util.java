@@ -62,8 +62,8 @@ public final class Util {
      *             property placeholder syntax or a recursive variable
      *             reference.
      */
-    public static String substVars(String val, String currentKey,
-            Map<String, String> cycleMap, Map<String, String> configProps)
+    public static String substVars(
+            String val, String currentKey, Map<String, String> cycleMap, Map<String, String> configProps)
             throws IllegalArgumentException {
 
         /////////////////////////////////////////////////////////////////
@@ -118,20 +118,16 @@ public final class Util {
         // we must perform a variable substitution on it.
         // Using the start and stop delimiter indices, extract
         // the first, deepest nested variable placeholder.
-        String variable =
-                val.substring(startDelim + DELIM_START.length(), stopDelim);
+        String variable = val.substring(startDelim + DELIM_START.length(), stopDelim);
 
         // Verify that this is not a recursive variable reference.
         if (cycleMap.get(variable) != null) {
-            throw new IllegalArgumentException(
-                "recursive variable reference: " + variable);
+            throw new IllegalArgumentException("recursive variable reference: " + variable);
         }
 
         // Get the value of the deepest nested variable placeholder.
         // Try to configuration properties first.
-        String substValue = (configProps != null)
-                ? configProps.get(variable)
-                : null;
+        String substValue = (configProps != null) ? configProps.get(variable) : null;
         if (substValue == null) {
             // Ignore unknown property values.
             substValue = System.getProperty(variable, "");
@@ -145,9 +141,7 @@ public final class Util {
         // Append the leading characters, the substituted value of
         // the variable, and the trailing characters to get the new
         // value.
-        val = val.substring(0, startDelim)
-            + substValue
-            + val.substring(stopDelim + DELIM_STOP.length(), val.length());
+        val = val.substring(0, startDelim) + substValue + val.substring(stopDelim + DELIM_STOP.length(), val.length());
 
         // Now perform substitution again, since there could still
         // be substitutions to make.
@@ -156,5 +150,4 @@ public final class Util {
         // Return the value.
         return val;
     }
-
 }

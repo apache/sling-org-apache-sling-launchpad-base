@@ -1,22 +1,22 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.sling.launchpad.base.webapp;
-
-import static org.apache.felix.framework.util.FelixConstants.LOG_LEVEL_PROP;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -35,7 +35,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletResponse;
-
 import org.apache.felix.framework.Logger;
 import org.apache.felix.http.proxy.ProxyServlet;
 import org.apache.sling.launchpad.api.LaunchpadContentProvider;
@@ -46,8 +45,9 @@ import org.apache.sling.launchpad.base.shared.Notifiable;
 import org.apache.sling.launchpad.base.shared.SharedConstants;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
-import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceReference;
+
+import static org.apache.felix.framework.util.FelixConstants.LOG_LEVEL_PROP;
 
 /**
  * The <code>SlingServletDelegate</code> serves as a basic servlet for Project Sling.
@@ -112,8 +112,7 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
     private static final long serialVersionUID = 1L;
 
     /** Mapping between log level numbers and names */
-    private static final String[] logLevels = { "FATAL", "ERROR", "WARN",
-        "INFO", "DEBUG" };
+    private static final String[] logLevels = {"FATAL", "ERROR", "WARN", "INFO", "DEBUG"};
 
     /**
      * The Sling configuration property name setting the initial log level
@@ -177,7 +176,7 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
         destroy();
     }
 
-   /**
+    /**
      * Initializes this servlet by loading the framework configuration
      * properties, starting the OSGi framework (Apache Felix) and exposing the
      * system bundle context and the <code>Felix</code> instance as servlet
@@ -200,8 +199,7 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
             Map<String, String> props = loadConfigProperties(slingHome);
 
             Logger logger = new ServletContextLogger(getServletContext());
-            LaunchpadContentProvider rp = new ServletContextResourceProvider(
-                getServletContext());
+            LaunchpadContentProvider rp = new ServletContextResourceProvider(getServletContext());
             tmpSling = SlingBridge.getSlingBridge(notifiable, logger, rp, props, getServletContext());
 
             // set up the OSGi HttpService proxy servlet
@@ -269,8 +267,7 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
      * @throws IOException if an input or output exception occurs
      */
     @Override
-    public final void service(ServletRequest req, ServletResponse res)
-            throws ServletException, IOException {
+    public final void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
 
         // delegate the request to the registered delegatee servlet
         Servlet delegatee = getDelegatee();
@@ -316,19 +313,29 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
 
     protected String calculateServletPackages(final String servletVersion, final int majorVersion) {
 
-        final String servlet5Packages = "jakarta.servlet;jakarta.servlet.http;jakarta.servlet.descriptor;jakarta.servlet.annotation";
+        final String servlet5Packages =
+                "jakarta.servlet;jakarta.servlet.http;jakarta.servlet.descriptor;jakarta.servlet.annotation";
         final String servlet6Packages = servlet5Packages;
 
         if (majorVersion < 5) {
-            throw new RuntimeException("Servlet API version " + majorVersion + " is not supported. Please use version 5 or 6.");
+            throw new RuntimeException(
+                    "Servlet API version " + majorVersion + " is not supported. Please use version 5 or 6.");
         } else if (majorVersion < 6) {
             return servlet5Packages.concat(";version=").concat(servletVersion);
         } else if (majorVersion < 7) {
-            return servlet5Packages.concat(";version=5.0,").concat(servlet6Packages).concat(";version=")
+            return servlet5Packages
+                    .concat(";version=5.0,")
+                    .concat(servlet6Packages)
+                    .concat(";version=")
                     .concat(servletVersion);
         }
-        return servlet5Packages.concat(";version=5.0,").concat(servlet6Packages).concat(";version=6.0,")
-                .concat(servlet6Packages).concat(";version=").concat(servletVersion);
+        return servlet5Packages
+                .concat(";version=5.0,")
+                .concat(servlet6Packages)
+                .concat(";version=6.0,")
+                .concat(servlet6Packages)
+                .concat(";version=")
+                .concat(servletVersion);
     }
 
     /**
@@ -354,15 +361,18 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
         // Try to load it from one of these places.
         Map<String, String> props = new HashMap<String, String>();
 
-        final String servletVersion = getServletContext().getMajorVersion() + "." +
-                                      getServletContext().getMinorVersion();
+        final String servletVersion = getServletContext().getMajorVersion() + "."
+                + getServletContext().getMinorVersion();
         // This property must start with a comma!
         props.put(
-                 Sling.PROP_SYSTEM_PACKAGES,
-                ",".concat(calculateServletPackages(servletVersion, getServletContext().getMajorVersion())));
+                Sling.PROP_SYSTEM_PACKAGES,
+                ","
+                        .concat(calculateServletPackages(
+                                servletVersion, getServletContext().getMajorVersion())));
         // extra capabilities
-        final String servletCaps = "osgi.contract;osgi.contract=JavaServlet;version:Version=\" " + servletVersion + "\";" +
-                        "uses:=\"jakarta.servlet,jakarta.servlet.http,jakarta.servlet.descriptor,jakarta.servlet.annotation\"";
+        final String servletCaps =
+                "osgi.contract;osgi.contract=JavaServlet;version:Version=\" " + servletVersion + "\";"
+                        + "uses:=\"jakarta.servlet,jakarta.servlet.http,jakarta.servlet.descriptor,jakarta.servlet.annotation\"";
         props.put(Sling.PROP_EXTRA_CAPS, servletCaps);
 
         // prevent system properties from being considered
@@ -396,8 +406,7 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
         if (insideWebapp(repoLocation)) {
             final URL url = getUrl(repoLocation);
             // only if we get back a resource url, we update it
-            if (url != null)
-                props.put(OBR_REPOSITORY_URL, url.toExternalForm());
+            if (url != null) props.put(OBR_REPOSITORY_URL, url.toExternalForm());
         }
 
         // set sling home
@@ -419,7 +428,7 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
                 logLevel = Integer.parseInt(logLevelString);
             } catch (NumberFormatException nfe) {
                 // might be a loglevel name
-                for (int i=0; i < logLevels.length; i++) {
+                for (int i = 0; i < logLevels.length; i++) {
                     if (logLevels[i].equalsIgnoreCase(logLevelString)) {
                         logLevel = i;
                         break;
@@ -451,12 +460,15 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
 
         @Override
         protected void doLog(
-                Bundle bundle, @SuppressWarnings("rawtypes") ServiceReference sr, int level,
-                String msg, Throwable throwable) {
+                Bundle bundle,
+                @SuppressWarnings("rawtypes") ServiceReference sr,
+                int level,
+                String msg,
+                Throwable throwable) {
 
             // unwind throwable if it is a BundleException
             if ((throwable instanceof BundleException)
-                && (((BundleException) throwable).getNestedException() != null)) {
+                    && (((BundleException) throwable).getNestedException() != null)) {
                 throwable = ((BundleException) throwable).getNestedException();
             }
 
@@ -488,8 +500,7 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
         }
     }
 
-    private static class ServletContextResourceProvider extends
-            ClassLoaderResourceProvider {
+    private static class ServletContextResourceProvider extends ClassLoaderResourceProvider {
 
         /**
          * The root folder for internal web application files (value is
@@ -520,23 +531,23 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
 
             @SuppressWarnings("rawtypes")
             Iterator resourceIterator;
-            if ( resources == null || resources.isEmpty() ) {
+            if (resources == null || resources.isEmpty()) {
                 // fall back to the class path
                 resourceIterator = super.getChildren(path);
 
-                if(resourceIterator.hasNext()) {
+                if (resourceIterator.hasNext()) {
                     return resourceIterator;
                 }
 
                 // fall back to WEB-INF within the class path
                 resourceIterator = super.getChildren(WEB_INF + path);
 
-                if(resourceIterator.hasNext()) {
+                if (resourceIterator.hasNext()) {
                     return resourceIterator;
                 }
             }
 
-            if ( resources == null ) {
+            if (resources == null) {
                 return Collections.EMPTY_LIST.iterator();
             }
             return resources.iterator(); // unchecked
@@ -563,19 +574,19 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
 
                 // otherwise try WEB-INF location
                 resource = servletContext.getResource(WEB_INF + path);
-                if(resource != null) {
+                if (resource != null) {
                     return resource;
                 }
 
                 // try classpath
                 resource = super.getResource(path);
-                if(resource != null) {
+                if (resource != null) {
                     return resource;
                 }
 
                 // try WEB-INF within the classpath
                 resource = super.getResource(WEB_INF + path);
-                if(resource != null) {
+                if (resource != null) {
                     return resource;
                 }
 
@@ -586,6 +597,5 @@ public class SlingServletDelegate extends GenericServlet implements Launcher {
             // fall back to no resource found
             return null;
         }
-
     }
 }

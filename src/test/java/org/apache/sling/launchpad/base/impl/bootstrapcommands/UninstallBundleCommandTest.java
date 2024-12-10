@@ -18,8 +18,6 @@
  */
 package org.apache.sling.launchpad.base.impl.bootstrapcommands;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.util.Hashtable;
 
 import org.apache.felix.framework.Logger;
@@ -30,6 +28,8 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Version;
 
+import static org.junit.Assert.assertNotNull;
+
 /** Test the UninstallBundleCommand */
 public class UninstallBundleCommandTest {
     private BundleContext bundleContext;
@@ -37,8 +37,8 @@ public class UninstallBundleCommandTest {
 
     @Before
     public void setUp() throws Exception {
-        final Bundle [] b = new Bundle[3];
-        for(int i=0; i < b.length; i++) {
+        final Bundle[] b = new Bundle[3];
+        for (int i = 0; i < b.length; i++) {
             b[i] = Mockito.mock(Bundle.class);
         }
 

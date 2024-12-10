@@ -32,7 +32,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkEvent;
 
-
 public class SlingFelix extends Felix {
 
     private final Notifiable notifiable;
@@ -88,8 +87,7 @@ public class SlingFelix extends Felix {
 
     private synchronized void startNotifier(final boolean restart, final InputStream ins) {
         if (notifierThread == null) {
-            notifierThread = new Thread(new Notifier(restart, ins),
-                "Sling Notifier");
+            notifierThread = new Thread(new Notifier(restart, ins), "Sling Notifier");
             notifierThread.setDaemon(false);
             notifierThread.start();
         }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
@@ -36,214 +36,19 @@
     <packaging>bundle</packaging>
 
     <name>Apache Sling Launchpad Base</name>
-    <description>
-        This module contains the common classes and configuration files used
-        by the various launchpad modules..
-    </description>
+    <description>This module contains the common classes and configuration files used
+        by the various launchpad modules..</description>
 
     <scm>
         <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-launchpad-base.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-launchpad-base.git</developerConnection>
-        <url>https://github.com/apache/sling-org-apache-sling-launchpad-base.git</url>
         <tag>HEAD</tag>
+        <url>https://github.com/apache/sling-org-apache-sling-launchpad-base.git</url>
     </scm>
 
     <properties>
         <sling.java.version>8</sling.java.version>
     </properties>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>testbundles</id>
-                        <phase>process-test-classes</phase>
-                        <configuration>
-                            <skip>${maven.test.skip}</skip>
-                            <target name="build">
-                                <taskdef resource="aQute/bnd/ant/taskdef.properties" classpathref="maven.plugin.classpath" />
-                                <bnd classpath="${project.build.testOutputDirectory}" failok="false" exceptions="true" files="src/test/resources/test1.bnd" output="${project.build.testOutputDirectory}" />
-                            </target>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>biz.aQute</groupId>
-                        <artifactId>bnd</artifactId>
-                        <version>0.0.384</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-            
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>5.1.9</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-Category>
-                            sling
-                        </Bundle-Category>
-                        <Bundle-SymbolicName>
-                            system.bundle
-                        </Bundle-SymbolicName>
-                        <Bundle-DocURL>
-                            http://sling.apache.org/site/the-sling-launchpad.html
-                        </Bundle-DocURL>
-                        <Private-Package>
-                            <!-- External (app, webapp) components -->
-                            !org.apache.sling.launchpad.base.shared.*,
-                            org.apache.sling.launchpad.base.*
-                        </Private-Package>
-                        <Import-Package>!*</Import-Package>
-                        <Export-Package>!*</Export-Package>
-                        <DynamicImport-Package>*</DynamicImport-Package>
-                        <Embed-Dependency>
-                            org.apache.felix.framework;inline=org/**|META-INF/**|default.properties,
-                            org.apache.felix.http.proxy;inline=org/apache/**,
-                            org.apache.sling.launchpad.api;inline=org/apache/sling/launchpad/api/**
-                        </Embed-Dependency>
-                    </instructions>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <!-- Embed code from osgi.commons -->
-                    <execution>
-                        <id>extract-sling-commons-osgi</id>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeArtifactIds>org.apache.sling.commons.osgi</includeArtifactIds>
-                            <excludeTransitive>true</excludeTransitive>
-                            <outputDirectory>
-                                ${project.build.directory}/classes
-                            </outputDirectory>
-                        </configuration>
-                    </execution>
-                    <!-- Embed osgi Version class from framework-->
-                    <execution>
-                        <id>extract-osgi-framework</id>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeArtifactIds>org.apache.felix.framework</includeArtifactIds>
-                            <excludeTransitive>true</excludeTransitive>
-                            <outputDirectory>
-                                ${project.build.directory}/classes
-                            </outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>base-app</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <mainClass>
-                                        org.apache.sling.launchpad.app.Main
-                                    </mainClass>
-                                    <addDefaultImplementationEntries>
-                                        true
-                                    </addDefaultImplementationEntries>
-                                </manifest>
-                            </archive>
-                            <classifier>app</classifier>
-                            <includes>
-                                <include>org/apache/sling/launchpad/base/shared/**</include>
-                                <include>org/apache/sling/launchpad/app/**</include>
-                                <include>org/apache/sling/commons/osgi/bundleversion/**</include>
-                                <include>org/osgi/framework/Version*</include>
-                                <include>META-INF/**</include>
-                            </includes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>base-webapp</id>
-                        <goals>
-                            <goal>war</goal>
-                        </goals>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <addDefaultImplementationEntries>
-                                        true
-                                    </addDefaultImplementationEntries>
-                                </manifest>
-                            </archive>
-                            <classifier>webapp</classifier>
-                            <packagingIncludes>
-                                META-INF/**,
-                                WEB-INF/classes/org/apache/sling/launchpad/base/shared/**,
-                                WEB-INF/classes/org/apache/sling/launchpad/webapp/**,
-                                WEB-INF/classes/org/apache/sling/commons/osgi/bundleversion/**,
-                                WEB-INF/classes/org/osgi/framework/Version*,
-                                WEB-INF/resources/**
-                            </packagingIncludes>
-                            <webResources>
-                                <!-- ensure the legalize stuff is in the war -->
-                                <webResource>
-                                    <targetPath />
-                                    <filtering>false</filtering>
-                                    <directory>${project.build.directory}/maven-shared-archive-resources</directory>
-                                </webResource>
-                            </webResources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <!-- No javadocs -->
-                    <excludePackageNames>
-                        org.apache.sling
-                    </excludePackageNames>
-                </configuration>
-            </plugin>
-            <plugin>
-               <groupId>org.codehaus.mojo</groupId>
-               <artifactId>animal-sniffer-maven-plugin</artifactId>
-               <version>1.20</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>
-                      --add-reads=org.apache.felix.framework=java.management
-                    </argLine>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
     <dependencies>
         <dependency>
@@ -295,4 +100,173 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>biz.aQute</groupId>
+                        <artifactId>bnd</artifactId>
+                        <version>0.0.384</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>testbundles</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>process-test-classes</phase>
+                        <configuration>
+                            <skip>${maven.test.skip}</skip>
+                            <target name="build">
+                                <taskdef classpathref="maven.plugin.classpath" resource="aQute/bnd/ant/taskdef.properties" />
+                                <bnd classpath="${project.build.testOutputDirectory}" exceptions="true" failok="false" files="src/test/resources/test1.bnd" output="${project.build.testOutputDirectory}" />
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <version>5.1.9</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-Category>sling</Bundle-Category>
+                        <Bundle-SymbolicName>system.bundle</Bundle-SymbolicName>
+                        <Bundle-DocURL>http://sling.apache.org/site/the-sling-launchpad.html</Bundle-DocURL>
+                        <Private-Package>
+                            <!-- External (app, webapp) components -->
+                            !org.apache.sling.launchpad.base.shared.*,
+                            org.apache.sling.launchpad.base.*
+                        </Private-Package>
+                        <Import-Package>!*</Import-Package>
+                        <Export-Package>!*</Export-Package>
+                        <DynamicImport-Package>*</DynamicImport-Package>
+                        <Embed-Dependency>org.apache.felix.framework;inline=org/**|META-INF/**|default.properties,
+                            org.apache.felix.http.proxy;inline=org/apache/**,
+                            org.apache.sling.launchpad.api;inline=org/apache/sling/launchpad/api/**</Embed-Dependency>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <!-- Embed code from osgi.commons -->
+                    <execution>
+                        <id>extract-sling-commons-osgi</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>org.apache.sling.commons.osgi</includeArtifactIds>
+                            <excludeTransitive>true</excludeTransitive>
+                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <!-- Embed osgi Version class from framework-->
+                    <execution>
+                        <id>extract-osgi-framework</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeArtifactIds>org.apache.felix.framework</includeArtifactIds>
+                            <excludeTransitive>true</excludeTransitive>
+                            <outputDirectory>${project.build.directory}/classes</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>base-app</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>org.apache.sling.launchpad.app.Main</mainClass>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                </manifest>
+                            </archive>
+                            <classifier>app</classifier>
+                            <includes>
+                                <include>org/apache/sling/launchpad/base/shared/**</include>
+                                <include>org/apache/sling/launchpad/app/**</include>
+                                <include>org/apache/sling/commons/osgi/bundleversion/**</include>
+                                <include>org/osgi/framework/Version*</include>
+                                <include>META-INF/**</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>base-webapp</id>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                </manifest>
+                            </archive>
+                            <classifier>webapp</classifier>
+                            <packagingIncludes>META-INF/**,
+                                WEB-INF/classes/org/apache/sling/launchpad/base/shared/**,
+                                WEB-INF/classes/org/apache/sling/launchpad/webapp/**,
+                                WEB-INF/classes/org/apache/sling/commons/osgi/bundleversion/**,
+                                WEB-INF/classes/org/osgi/framework/Version*,
+                                WEB-INF/resources/**</packagingIncludes>
+                            <webResources>
+                                <!-- ensure the legalize stuff is in the war -->
+                                <webResource>
+                                    <targetPath />
+                                    <filtering>false</filtering>
+                                    <directory>${project.build.directory}/maven-shared-archive-resources</directory>
+                                </webResource>
+                            </webResources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <!-- No javadocs -->
+                    <excludePackageNames>org.apache.sling</excludePackageNames>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-maven-plugin</artifactId>
+                <version>1.20</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>--add-reads=org.apache.felix.framework=java.management</argLine>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

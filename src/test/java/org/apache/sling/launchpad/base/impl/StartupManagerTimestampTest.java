@@ -18,8 +18,6 @@
  */
 package org.apache.sling.launchpad.base.impl;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -31,10 +29,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.Constants;
 
+import static org.junit.Assert.assertTrue;
+
 /** Test the timestamp functions of the StartupManager */
 public class StartupManagerTimestampTest {
     private StartupManager startupManager;
-    
+
     @Before
     public void setup() throws IOException {
         final File tmpFile = File.createTempFile(getClass().getSimpleName(), "tmp");
@@ -44,14 +44,14 @@ public class StartupManagerTimestampTest {
             properties.put(SharedConstants.SLING_HOME, tmpDirName);
             properties.put(Constants.FRAMEWORK_STORAGE, tmpDirName);
             properties.put(Constants.FRAMEWORK_BEGINNING_STARTLEVEL, "42");
-            
+
             final Logger logger = new Logger();
             startupManager = new StartupManager(properties, logger);
         } finally {
             tmpFile.delete();
         }
     }
-    
+
     @Test
     public void testClassTimestamp() {
         final int defaultValue = Integer.MIN_VALUE;

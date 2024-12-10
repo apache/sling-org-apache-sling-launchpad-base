@@ -1,22 +1,22 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.sling.launchpad.base.app;
-
-import static org.apache.felix.framework.util.FelixConstants.LOG_LEVEL_PROP;
 
 import java.io.PrintStream;
 import java.text.DateFormat;
@@ -36,6 +36,8 @@ import org.apache.sling.launchpad.base.shared.SharedConstants;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
+
+import static org.apache.felix.framework.util.FelixConstants.LOG_LEVEL_PROP;
 
 /**
  * The <code>Main</code> class is a simple Java Application which interprests
@@ -74,8 +76,7 @@ import org.osgi.framework.ServiceReference;
 public class MainDelegate implements Launcher {
 
     /** Mapping between log level numbers and names */
-    private static final String[] logLevels = { "FATAL", "ERROR", "WARN",
-        "INFO", "DEBUG" };
+    private static final String[] logLevels = {"FATAL", "ERROR", "WARN", "INFO", "DEBUG"};
 
     /** The Sling configuration property name setting the initial log level */
     private static final String PROP_LOG_LEVEL = "org.apache.sling.commons.log.level";
@@ -134,8 +135,7 @@ public class MainDelegate implements Launcher {
         if (slingHome != null) {
             props.put(SharedConstants.SLING_HOME, slingHome);
         } else if (commandLine.containsKey(SharedConstants.SLING_HOME)) {
-            props.put(SharedConstants.SLING_HOME,
-                commandLine.get(SharedConstants.SLING_HOME));
+            props.put(SharedConstants.SLING_HOME, commandLine.get(SharedConstants.SLING_HOME));
         }
 
         // ensure sling.launchpad is set
@@ -154,26 +154,24 @@ public class MainDelegate implements Launcher {
         if (!commandLine.containsKey(PROP_LOG_LEVEL)) {
             logLevel = DEFAULT_LOG_LEVEL;
         } else {
-            logLevel = toLogLevelInt(commandLine.get(PROP_LOG_LEVEL),
-                DEFAULT_LOG_LEVEL);
+            logLevel = toLogLevelInt(commandLine.get(PROP_LOG_LEVEL), DEFAULT_LOG_LEVEL);
             commandLine.put(LOG_LEVEL_PROP, String.valueOf(logLevel));
         }
         final Logger logger = new SlingLogger();
 
         // default log level: prevent tons of needless WARN from the framework
         logger.setLogLevel(Logger.LOG_ERROR);
-        if ( System.getProperty(PROP_BOOT_LOG_LEVEL) != null ) {
+        if (System.getProperty(PROP_BOOT_LOG_LEVEL) != null) {
             try {
-                logger.setLogLevel(
-                    Integer.parseInt(System.getProperty(PROP_BOOT_LOG_LEVEL)));
+                logger.setLogLevel(Integer.parseInt(System.getProperty(PROP_BOOT_LOG_LEVEL)));
             } catch (final NumberFormatException ex) {
                 // just ignore
             }
         }
 
         try {
-            LaunchpadContentProvider resProvider = new ClassLoaderResourceProvider(
-                getClass().getClassLoader());
+            LaunchpadContentProvider resProvider =
+                    new ClassLoaderResourceProvider(getClass().getClassLoader());
 
             // creating the instance launches the framework and we are done here
             // ..
@@ -183,8 +181,7 @@ public class MainDelegate implements Launcher {
                 // command line arguments unconditionally. These will not be
                 // persisted in any properties file, though
                 @Override
-                protected void loadPropertiesOverride(
-                        Map<String, String> properties) {
+                protected void loadPropertiesOverride(Map<String, String> properties) {
                     if (commandLine != null) {
                         properties.putAll(commandLine);
                     }
@@ -219,8 +216,7 @@ public class MainDelegate implements Launcher {
      * Parses the command line in <code>args</code> and sets appropriate Sling
      * configuration options in the <code>props</code> map.
      */
-    private static void parseCommandLine(Map<String, String> args,
-            Map<String, String> props) {
+    private static void parseCommandLine(Map<String, String> args, Map<String, String> props) {
 
         /*
          * NOTE: We expect command line args to be suitable to use as
@@ -350,8 +346,7 @@ public class MainDelegate implements Launcher {
 
     // helper method to format the message on the correct output channel
     // the throwable if not-null is also prefixed line by line with the prefix
-    private static void log(PrintStream out, String prefix, String message,
-            Throwable t) {
+    private static void log(PrintStream out, String prefix, String message, Throwable t) {
 
         final StringBuilder linePrefixBuilder = new StringBuilder();
         synchronized (fmt) {
@@ -384,10 +379,16 @@ public class MainDelegate implements Launcher {
     private static class SlingLogger extends Logger {
 
         @Override
-        protected void doLog(Bundle bundle, @SuppressWarnings("rawtypes") ServiceReference sr, int level, String msg, Throwable throwable) {
+        protected void doLog(
+                Bundle bundle,
+                @SuppressWarnings("rawtypes") ServiceReference sr,
+                int level,
+                String msg,
+                Throwable throwable) {
 
             // unwind throwable if it is a BundleException
-            if ((throwable instanceof BundleException) && (((BundleException) throwable).getNestedException() != null)) {
+            if ((throwable instanceof BundleException)
+                    && (((BundleException) throwable).getNestedException() != null)) {
                 throwable = ((BundleException) throwable).getNestedException();
             }
 
@@ -402,7 +403,7 @@ public class MainDelegate implements Launcher {
                 sb.append("' ");
             }
             sb.append(msg);
-            if ( throwable != null ) {
+            if (throwable != null) {
                 sb.append(" (");
                 sb.append(throwable);
                 sb.append(")");

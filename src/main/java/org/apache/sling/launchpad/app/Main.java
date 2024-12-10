@@ -1,18 +1,20 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.sling.launchpad.app;
 
@@ -202,9 +204,7 @@ public class Main {
      *            configuration is assumed.
      */
     protected Main(Map<String, String> args) {
-        this.commandLineArgs = (args == null)
-                ? new HashMap<String, String>()
-                : args;
+        this.commandLineArgs = (args == null) ? new HashMap<String, String>() : args;
 
         this.installShutdownHook = installShutdownHook(this.commandLineArgs);
 
@@ -276,8 +276,7 @@ public class Main {
     protected int doControlAction() {
         final ControlAction action = getControlAction();
         if (action != null) {
-            final ControlListener sl = new ControlListener(this,
-                commandLineArgs.remove(PROP_CONTROL_SOCKET));
+            final ControlListener sl = new ControlListener(this, commandLineArgs.remove(PROP_CONTROL_SOCKET));
             switch (action) {
                 case START:
                     if (!sl.listen()) {
@@ -340,14 +339,13 @@ public class Main {
      */
     protected boolean doStart() {
         // ensure up-to-date launcher jar
-        return doStart(getClass().getResource(
-            SharedConstants.DEFAULT_SLING_LAUNCHER_JAR));
+        return doStart(getClass().getResource(SharedConstants.DEFAULT_SLING_LAUNCHER_JAR));
     }
 
     protected boolean doStart(final URL launcherJar) {
 
         // prevent duplicate start
-        if ( this.started) {
+        if (this.started) {
             info("Apache Sling has already been started", null);
             return true;
         }
@@ -357,8 +355,7 @@ public class Main {
 
         Loader loaderTmp = null;
         try {
-            final File launchpadHome = getLaunchpadHome(slingHome,
-                commandLineArgs);
+            final File launchpadHome = getLaunchpadHome(slingHome, commandLineArgs);
             loaderTmp = new Loader(launchpadHome) {
                 @Override
                 protected void info(String msg) {
@@ -366,9 +363,7 @@ public class Main {
                 }
             };
         } catch (IllegalArgumentException iae) {
-            error(
-                "Cannot launch: Launchpad folder cannot be used: "
-                    + iae.getMessage(), null);
+            error("Cannot launch: Launchpad folder cannot be used: " + iae.getMessage(), null);
             return false;
         }
         this.loader = loaderTmp;
@@ -377,8 +372,7 @@ public class Main {
             try {
                 loader.installLauncherJar(launcherJar);
             } catch (IOException ioe) {
-                error("Cannot launch: Cannot install " + launcherJar
-                    + " for use", ioe);
+                error("Cannot launch: Cannot install " + launcherJar + " for use", ioe);
                 return false;
             }
         } else {
@@ -389,8 +383,7 @@ public class Main {
         try {
             object = loader.loadLauncher(SharedConstants.DEFAULT_SLING_MAIN);
         } catch (IllegalArgumentException iae) {
-            error("Cannot launch: Failed loading Sling class "
-                + SharedConstants.DEFAULT_SLING_MAIN, iae);
+            error("Cannot launch: Failed loading Sling class " + SharedConstants.DEFAULT_SLING_MAIN, iae);
             return false;
         }
 
@@ -416,7 +409,6 @@ public class Main {
         } else {
 
             error("Cannot launch: Class " + SharedConstants.DEFAULT_SLING_MAIN + " is not a Launcher class", null);
-
         }
 
         return false;
@@ -515,7 +507,6 @@ public class Main {
 
                     source = "default";
                     slingHome = SharedConstants.SLING_HOME_DEFAULT;
-
                 }
             }
         }
@@ -547,8 +538,7 @@ public class Main {
      *            <code>sling.launchpad</code> property.
      * @return The absolute <code>File</code> indicating the launchpad folder.
      */
-    private static File getLaunchpadHome(final String slingHome,
-            final Map<String, String> commandLineArgs) {
+    private static File getLaunchpadHome(final String slingHome, final Map<String, String> commandLineArgs) {
         final String launchpadHomeParam = commandLineArgs.get(SharedConstants.SLING_LAUNCHPAD);
         if (launchpadHomeParam == null || launchpadHomeParam.length() == 0) {
             commandLineArgs.put(SharedConstants.SLING_LAUNCHPAD, slingHome);
@@ -560,8 +550,7 @@ public class Main {
             launchpadHome = new File(slingHome, launchpadHomeParam);
         }
 
-        commandLineArgs.put(SharedConstants.SLING_LAUNCHPAD,
-            launchpadHome.getAbsolutePath());
+        commandLineArgs.put(SharedConstants.SLING_LAUNCHPAD, launchpadHome.getAbsolutePath());
         return launchpadHome;
     }
 
@@ -581,8 +570,7 @@ public class Main {
 
     // helper method to format the message on the correct output channel
     // the throwable if not-null is also prefixed line by line with the prefix
-    private static void log(PrintStream out, String prefix, String message,
-            Throwable t) {
+    private static void log(PrintStream out, String prefix, String message, Throwable t) {
 
         final StringBuilder linePrefixBuilder = new StringBuilder();
         synchronized (fmt) {
@@ -638,14 +626,14 @@ public class Main {
                 commandLine.put(arg, arg);
             } else if (arg.startsWith("-")) {
                 if (arg.length() == 1) {
-                   readUnparsed = true;
+                    readUnparsed = true;
                 } else {
                     String key = String.valueOf(arg.charAt(1));
                     if (arg.length() > 2) {
                         final String val;
                         final int indexOfEq = arg.indexOf('=');
                         if (indexOfEq != -1) {
-                            //Handle case -Da=b
+                            // Handle case -Da=b
                             key = arg.substring(1, indexOfEq);
                             val = arg.substring(indexOfEq + 1);
                         } else {
@@ -654,15 +642,14 @@ public class Main {
                         commandLine.put(key, val);
                     } else {
                         argc++;
-                        if (argc < args.length
-                            && (args[argc].equals("-") || !args[argc].startsWith("-"))) {
+                        if (argc < args.length && (args[argc].equals("-") || !args[argc].startsWith("-"))) {
                             String val = args[argc];
 
-                            //Special handling for -D a=b
-                            if(key.equals("D")){
+                            // Special handling for -D a=b
+                            if (key.equals("D")) {
                                 final int indexOfEq = val.indexOf('=');
                                 if (indexOfEq != -1) {
-                                    //Handle case -D a=b. Add key as Da
+                                    // Handle case -D a=b. Add key as Da
                                     key = "D" + val.substring(0, indexOfEq);
                                     val = val.substring(indexOfEq + 1);
                                 }
@@ -684,15 +671,17 @@ public class Main {
     /** prints a simple usage plus optional error message */
     private static boolean doHelp(Map<String, String> args) {
         if (args.remove("h") != null) {
-            System.out.println("usage: "
-                + Main.class.getName()
-                + " [ start | stop | status ] [ -j adr ] [ -l loglevel ] [ -f logfile ] [ -c slinghome ] [ -i launchpadhome ] [ -a address ] [ -p port ] { -Dn=v } [ -h ]");
+            System.out.println(
+                    "usage: "
+                            + Main.class.getName()
+                            + " [ start | stop | status ] [ -j adr ] [ -l loglevel ] [ -f logfile ] [ -c slinghome ] [ -i launchpadhome ] [ -a address ] [ -p port ] { -Dn=v } [ -h ]");
 
             System.out.println("    start         listen for control connection (uses -j)");
             System.out.println("    stop          terminate running Apache Sling (uses -j)");
             System.out.println("    status        check whether Apache Sling is running (uses -j)");
             System.out.println("    threads       request a thread dump from Apache Sling (uses -j)");
-            System.out.println("    -j adr        host and port to use for control connection in the format '[host:]port' (default 127.0.0.1:0)");
+            System.out.println(
+                    "    -j adr        host and port to use for control connection in the format '[host:]port' (default 127.0.0.1:0)");
             System.out.println("    -l loglevel   the initial loglevel (0..4, FATAL, ERROR, WARN, INFO, DEBUG)");
             System.out.println("    -f logfile    the log file, \"-\" for stdout (default logs/error.log)");
             System.out.println("    -c slinghome  the sling context directory (default sling)");
@@ -701,9 +690,9 @@ public class Main {
             System.out.println("    -p port       the port to listen to (default 8080)");
             System.out.println("    -r path       the root servlet context path for the http service (default is /)");
             System.out.println("    -n            don't install the shutdown hook");
-            System.out.println("    -Dn=v         sets property n to value v. Make sure to use this option *after* " +
-                                                  "the jar filename. The JVM also has a -D option which has a " +
-                                                  "different meaning");
+            System.out.println("    -Dn=v         sets property n to value v. Make sure to use this option *after* "
+                    + "the jar filename. The JVM also has a -D option which has a "
+                    + "different meaning");
             System.out.println("    -h            prints this usage message");
 
             return true;
@@ -721,8 +710,7 @@ public class Main {
     }
 
     // default accessor to enable unit tests without requiring reflection
-    static Map<String, String> convertCommandLineArgs(
-            Map<String, String> rawArgs) {
+    static Map<String, String> convertCommandLineArgs(Map<String, String> rawArgs) {
         final HashMap<String, String> props = new HashMap<String, String>();
         boolean errorArg = false;
         for (Entry<String, String> arg : rawArgs.entrySet()) {
@@ -821,10 +809,10 @@ public class Main {
                             continue;
                         }
                         if (arg.getKey().length() > 1) {
-                            //Dfoo=bar arg.key=Dfoo and arg.value=bar
+                            // Dfoo=bar arg.key=Dfoo and arg.value=bar
                             props.put(arg.getKey().substring(1), arg.getValue());
                         } else {
-                            //D foo=bar arg.key=D and arg.value=foo=bar
+                            // D foo=bar arg.key=D and arg.value=foo=bar
                             String[] parts = value.split("=");
                             int valueIdx = (parts.length > 1) ? 1 : 0;
                             props.put(parts[0], parts[valueIdx]);
@@ -850,8 +838,7 @@ public class Main {
     }
 
     private static void errorArg(String option, String message) {
-        error(String.format("%s: %s (use -h for more information)", option,
-            message), null);
+        error(String.format("%s: %s (use -h for more information)", option, message), null);
     }
 
     /**
@@ -926,7 +913,6 @@ public class Main {
              * is removed and remove the shutdown hook (but don't care if that
              * fails).
              */
-
             Main.info("Apache Sling has been stopped", null);
 
             Main.this.sling = null;
@@ -964,8 +950,7 @@ public class Main {
 
             } else {
 
-                Main.info(
-                    "Restarting Framework with update from " + updateFile, null);
+                Main.info("Restarting Framework with update from " + updateFile, null);
                 boolean started = false;
                 try {
                     started = Main.this.doStart(updateFile.toURI().toURL());
@@ -982,5 +967,4 @@ public class Main {
             }
         }
     }
-
 }

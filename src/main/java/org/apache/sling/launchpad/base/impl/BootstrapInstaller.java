@@ -133,7 +133,8 @@ class BootstrapInstaller {
     /** The startup mode. */
     private final StartupMode startupMode;
 
-    BootstrapInstaller(final BundleContext bundleContext,
+    BootstrapInstaller(
+            final BundleContext bundleContext,
             final Logger logger,
             final LaunchpadContentProvider resourceProvider,
             final StartupMode startupMode) {
@@ -169,8 +170,8 @@ class BootstrapInstaller {
         final File slingStartupDir = getSlingStartupDir(launchpadHome);
 
         // execute bootstrap commands, if needed
-        final BootstrapCommandFile cmd = new BootstrapCommandFile(logger,
-            new File(launchpadHome, BOOTSTRAP_CMD_FILENAME));
+        final BootstrapCommandFile cmd =
+                new BootstrapCommandFile(logger, new File(launchpadHome, BOOTSTRAP_CMD_FILENAME));
         boolean requireRestart = cmd.execute(bundleContext);
 
         boolean shouldInstall = false;
@@ -191,7 +192,9 @@ class BootstrapInstaller {
             Boolean disablePackageBundleLoading = Boolean.valueOf(dpblString);
 
             if (disablePackageBundleLoading) {
-                logger.log(Logger.LOG_INFO, "Package bundle loading is disabled so no bundles will be installed from the resources location in the sling jar/war");
+                logger.log(
+                        Logger.LOG_INFO,
+                        "Package bundle loading is disabled so no bundles will be installed from the resources location in the sling jar/war");
             } else {
                 // get the bundles out of the jar/war and copy them to the startup location
                 Iterator<String> resources = resourceProvider.getChildren(PATH_BUNDLES);
@@ -242,14 +245,14 @@ class BootstrapInstaller {
         // to a negative value.
         if (requireRestart) {
             logger.log(
-                Logger.LOG_INFO,
-                "Framework extension(s) have been updated, restarting framework after startup has completed");
+                    Logger.LOG_INFO,
+                    "Framework extension(s) have been updated, restarting framework after startup has completed");
         }
 
         return requireRestart;
     }
 
-    //---------- Startup folder maintenance
+    // ---------- Startup folder maintenance
 
     /**
      * Get the sling startup directory (or create it) in the sling home if possible
@@ -272,14 +275,13 @@ class BootstrapInstaller {
      */
     private File getOrCreateDirectory(File parentDir, String subDirName) {
         File slingHomeStartupDir = new File(parentDir, subDirName).getAbsoluteFile();
-        if ( slingHomeStartupDir.exists() ) {
-            if (! slingHomeStartupDir.isDirectory()
-                    || ! parentDir.canRead()
-                    || ! parentDir.canWrite() ) {
-                throw new IllegalStateException("Fatal error in bootstrap: Cannot find accessible existing "
-                        +SharedConstants.SLING_HOME+DirectoryUtil.PATH_STARTUP+" directory: " + slingHomeStartupDir);
+        if (slingHomeStartupDir.exists()) {
+            if (!slingHomeStartupDir.isDirectory() || !parentDir.canRead() || !parentDir.canWrite()) {
+                throw new IllegalStateException(
+                        "Fatal error in bootstrap: Cannot find accessible existing " + SharedConstants.SLING_HOME
+                                + DirectoryUtil.PATH_STARTUP + " directory: " + slingHomeStartupDir);
             }
-        } else if (! slingHomeStartupDir.mkdirs() ) {
+        } else if (!slingHomeStartupDir.mkdirs()) {
             throw new IllegalStateException("Sling Home " + slingHomeStartupDir + " cannot be created as a directory");
         }
         return slingHomeStartupDir;
@@ -315,8 +317,7 @@ class BootstrapInstaller {
                     // ensure we have a directory for the startlevel only when
                     // needed
                     if (startUpLevelDir == null) {
-                        startUpLevelDir = getOrCreateDirectory(slingStartupDir,
-                            String.valueOf(startLevel));
+                        startUpLevelDir = getOrCreateDirectory(slingStartupDir, String.valueOf(startLevel));
                     }
 
                     // copy over the bundle based on the startlevel
@@ -326,9 +327,11 @@ class BootstrapInstaller {
                         copyStreamToFile(ins, bundleFile);
                     } catch (IOException e) {
                         // should this fail here or just log a warning?
-                        throw new RuntimeException("Failure copying file from "
-                            + path + " to startup dir (" + startUpLevelDir
-                            + ") and name (" + bundleFileName + "): " + e, e);
+                        throw new RuntimeException(
+                                "Failure copying file from "
+                                        + path + " to startup dir (" + startUpLevelDir
+                                        + ") and name (" + bundleFileName + "): " + e,
+                                e);
                     }
                 } finally {
                     try {
@@ -349,7 +352,7 @@ class BootstrapInstaller {
         if (fromStream == null || toFile == null) {
             throw new IllegalArgumentException("fromStream and toFile must not be null");
         }
-        if (! toFile.exists()) {
+        if (!toFile.exists()) {
             toFile.createNewFile();
         }
         // overwrite
@@ -382,9 +385,8 @@ class BootstrapInstaller {
      * @return <code>true</code> if a system bundle fragment was updated which
      *      requires the framework to restart.
      */
-    private boolean installBundles(final File slingStartupDir,
-            final Map<String, Bundle> currentBundles,
-            final List<Bundle> installed) {
+    private boolean installBundles(
+            final File slingStartupDir, final Map<String, Bundle> currentBundles, final List<Bundle> installed) {
 
         boolean requireRestart = false;
         File[] directories = slingStartupDir.listFiles(DirectoryUtil.DIRECTORY_FILTER);
@@ -401,8 +403,7 @@ class BootstrapInstaller {
             // iterate through all files in the startlevel dir
             File[] bundleFiles = levelDir.listFiles(DirectoryUtil.BUNDLE_FILE_FILTER);
             for (File bundleFile : bundleFiles) {
-                requireRestart |= installBundle(bundleFile, startLevel,
-                    currentBundles, installed);
+                requireRestart |= installBundle(bundleFile, startLevel, currentBundles, installed);
             }
         }
 
@@ -422,32 +423,31 @@ class BootstrapInstaller {
      * @return <code>true</code> if a system bundle fragment was updated which
      *      requires the framework to restart.
      */
-    private boolean installBundle(final File bundleJar,
+    private boolean installBundle(
+            final File bundleJar,
             final int startLevel,
             final Map<String, Bundle> currentBundles,
             final List<Bundle> installed) {
         // get the manifest for the bundle information
         Manifest manifest = getManifest(bundleJar);
         if (manifest == null) {
-            logger.log(Logger.LOG_ERROR, "Ignoring " + bundleJar
-                + ": Cannot read manifest");
+            logger.log(Logger.LOG_ERROR, "Ignoring " + bundleJar + ": Cannot read manifest");
             return false; // SHORT CIRCUIT
         }
 
         // ensure a symbolic name in the jar file
         String symbolicName = getBundleSymbolicName(manifest);
         if (symbolicName == null) {
-            logger.log(Logger.LOG_ERROR, "Ignoring " + bundleJar
-                + ": Missing " + Constants.BUNDLE_SYMBOLICNAME
-                + " in manifest");
+            logger.log(
+                    Logger.LOG_ERROR,
+                    "Ignoring " + bundleJar + ": Missing " + Constants.BUNDLE_SYMBOLICNAME + " in manifest");
             return false; // SHORT CIRCUIT
         }
 
         // check for an installed Bundle with the symbolic name
         Bundle installedBundle = currentBundles.get(symbolicName);
         if (ignore(installedBundle, manifest)) {
-            logger.log(Logger.LOG_INFO, "Ignoring " + bundleJar
-                + ": More recent version already installed");
+            logger.log(Logger.LOG_INFO, "Ignoring " + bundleJar + ": More recent version already installed");
             return false; // SHORT CIRCUIT
         }
 
@@ -469,17 +469,15 @@ class BootstrapInstaller {
 
             try {
                 installedBundle.update(ins);
-                logger.log(Logger.LOG_INFO, "Bundle "
-                    + installedBundle.getSymbolicName()
-                    + " updated from " + bundleJar);
+                logger.log(
+                        Logger.LOG_INFO, "Bundle " + installedBundle.getSymbolicName() + " updated from " + bundleJar);
 
                 // optionally set the start level
                 if (startLevel > 0) {
                     installedBundle.adapt(BundleStartLevel.class).setStartLevel(startLevel);
                 }
             } catch (BundleException be) {
-                logger.log(Logger.LOG_ERROR, "Bundle update from "
-                    + bundleJar + " failed", be);
+                logger.log(Logger.LOG_ERROR, "Bundle update from " + bundleJar + " failed", be);
             }
 
         } else {
@@ -490,13 +488,10 @@ class BootstrapInstaller {
 
             // install the JAR file as a bundle
             String path = bundleJar.getPath();
-            String location = SCHEME
-                + path.substring(path.lastIndexOf('/') + 1);
+            String location = SCHEME + path.substring(path.lastIndexOf('/') + 1);
             try {
                 Bundle theBundle = bundleContext.installBundle(location, ins);
-                logger.log(Logger.LOG_INFO, "Bundle "
-                    + theBundle.getSymbolicName() + " installed from "
-                    + location);
+                logger.log(Logger.LOG_INFO, "Bundle " + theBundle.getSymbolicName() + " installed from " + location);
 
                 // finally add the bundle to the list for later start
                 installed.add(theBundle);
@@ -507,8 +502,7 @@ class BootstrapInstaller {
                 }
 
             } catch (BundleException be) {
-                logger.log(Logger.LOG_ERROR,
-                    "Bundle installation from " + location + " failed", be);
+                logger.log(Logger.LOG_ERROR, "Bundle installation from " + location + " failed", be);
             }
         }
 
@@ -529,11 +523,9 @@ class BootstrapInstaller {
                     bundle.start();
                 }
             } catch (final BundleException be) {
-                logger.log(Logger.LOG_ERROR, "Bundle "
-                    + bundle.getSymbolicName() + " could not be started", be);
+                logger.log(Logger.LOG_ERROR, "Bundle " + bundle.getSymbolicName() + " could not be started", be);
             }
         }
-
     }
 
     private int getStartLevel(final String path) {
@@ -544,11 +536,9 @@ class BootstrapInstaller {
                 return level;
             }
 
-            logger.log(Logger.LOG_ERROR, "Illegal Runlevel for " + path
-                + ", ignoring");
+            logger.log(Logger.LOG_ERROR, "Illegal Runlevel for " + path + ", ignoring");
         } catch (final NumberFormatException nfe) {
-            logger.log(Logger.LOG_INFO, "Folder " + path
-                + " does not denote start level, ignoring");
+            logger.log(Logger.LOG_INFO, "Folder " + path + " does not denote start level, ignoring");
         }
 
         // no valid start level, ignore this location
@@ -556,10 +546,8 @@ class BootstrapInstaller {
     }
 
     private boolean isSystemBundleFragment(final Bundle installedBundle) {
-        final String fragmentHeader = installedBundle.getHeaders().get(
-            Constants.FRAGMENT_HOST);
-        return fragmentHeader != null
-            && fragmentHeader.indexOf(Constants.EXTENSION_DIRECTIVE) > 0;
+        final String fragmentHeader = installedBundle.getHeaders().get(Constants.FRAGMENT_HOST);
+        return fragmentHeader != null && fragmentHeader.indexOf(Constants.EXTENSION_DIRECTIVE) > 0;
     }
 
     // ---------- Bundle JAR file information
@@ -578,8 +566,7 @@ class BootstrapInstaller {
             jarFile = new JarFile(jar, false);
             return jarFile.getManifest();
         } catch (IOException e) {
-            logger.log(Logger.LOG_WARNING,
-                "Could not get inputstream from file (" + jar + "):" + e);
+            logger.log(Logger.LOG_WARNING, "Could not get inputstream from file (" + jar + "):" + e);
         } finally {
             if (jarFile != null) {
                 try {
@@ -602,8 +589,7 @@ class BootstrapInstaller {
      * @param manifest The Manifest from which to extract the header.
      */
     static String getBundleSymbolicName(final Manifest manifest) {
-        return manifest.getMainAttributes().getValue(
-            Constants.BUNDLE_SYMBOLICNAME);
+        return manifest.getMainAttributes().getValue(Constants.BUNDLE_SYMBOLICNAME);
     }
 
     /**
@@ -623,21 +609,18 @@ class BootstrapInstaller {
             return false;
         }
 
-        String versionProp = manifest.getMainAttributes().getValue(
-            Constants.BUNDLE_VERSION);
+        String versionProp = manifest.getMainAttributes().getValue(Constants.BUNDLE_VERSION);
         Version newVersion = Version.parseVersion(versionProp);
 
-        String installedVersionProp = installedBundle.getHeaders().get(
-            Constants.BUNDLE_VERSION);
+        String installedVersionProp = installedBundle.getHeaders().get(Constants.BUNDLE_VERSION);
         Version installedVersion = Version.parseVersion(installedVersionProp);
 
         // if the new version and the current version are the same, reinstall if
         // the version is a snapshot
         if (newVersion.equals(installedVersion)
-            && installedVersionProp.endsWith("SNAPSHOT")
-            && isNewerSnapshot(installedBundle, manifest)) {
-            logger.log(Logger.LOG_INFO, "Forcing upgrade of SNAPSHOT bundle: "
-                + installedBundle.getSymbolicName());
+                && installedVersionProp.endsWith("SNAPSHOT")
+                && isNewerSnapshot(installedBundle, manifest)) {
+            logger.log(Logger.LOG_INFO, "Forcing upgrade of SNAPSHOT bundle: " + installedBundle.getSymbolicName());
             return false;
         }
 
@@ -663,20 +646,22 @@ class BootstrapInstaller {
      *         fails for some reason
      */
     private boolean isNewerSnapshot(final Bundle installedBundle, final Manifest manifest) {
-        String installedDate = installedBundle.getHeaders().get(
-            BND_LAST_MODIFIED_HEADER);
-        String toBeInstalledDate = manifest.getMainAttributes().getValue(
-            BND_LAST_MODIFIED_HEADER);
+        String installedDate = installedBundle.getHeaders().get(BND_LAST_MODIFIED_HEADER);
+        String toBeInstalledDate = manifest.getMainAttributes().getValue(BND_LAST_MODIFIED_HEADER);
         if (installedDate == null) {
-            logger.log(Logger.LOG_DEBUG, String.format(
-                "Currently installed bundle %s doesn't have a %s header",
-                installedBundle.getSymbolicName(), BND_LAST_MODIFIED_HEADER));
+            logger.log(
+                    Logger.LOG_DEBUG,
+                    String.format(
+                            "Currently installed bundle %s doesn't have a %s header",
+                            installedBundle.getSymbolicName(), BND_LAST_MODIFIED_HEADER));
             return true;
         }
         if (toBeInstalledDate == null) {
-            logger.log(Logger.LOG_DEBUG, String.format(
-                "Candidate bundle %s doesn't have a %s header",
-                installedBundle.getSymbolicName(), BND_LAST_MODIFIED_HEADER));
+            logger.log(
+                    Logger.LOG_DEBUG,
+                    String.format(
+                            "Candidate bundle %s doesn't have a %s header",
+                            installedBundle.getSymbolicName(), BND_LAST_MODIFIED_HEADER));
             return true;
         }
 
@@ -684,25 +669,28 @@ class BootstrapInstaller {
         try {
             installedTime = Long.valueOf(installedDate);
         } catch (NumberFormatException e) {
-            logger.log(Logger.LOG_DEBUG, String.format(
-                "%s header of currently installed bundle %s isn't parseable.",
-                BND_LAST_MODIFIED_HEADER, installedBundle.getSymbolicName()));
+            logger.log(
+                    Logger.LOG_DEBUG,
+                    String.format(
+                            "%s header of currently installed bundle %s isn't parseable.",
+                            BND_LAST_MODIFIED_HEADER, installedBundle.getSymbolicName()));
             return true;
         }
         try {
             toBeInstalledTime = Long.valueOf(toBeInstalledDate);
         } catch (NumberFormatException e) {
-            logger.log(Logger.LOG_DEBUG, String.format(
-                "%s header of candidate bundle %s isn't parseable.",
-                BND_LAST_MODIFIED_HEADER, installedBundle.getSymbolicName()));
+            logger.log(
+                    Logger.LOG_DEBUG,
+                    String.format(
+                            "%s header of candidate bundle %s isn't parseable.",
+                            BND_LAST_MODIFIED_HEADER, installedBundle.getSymbolicName()));
             return true;
         }
 
         return toBeInstalledTime > installedTime;
-
     }
 
-    //---------- helper
+    // ---------- helper
     /**
      * Simple check to see if a string is blank since
      * StringUtils is not available here, maybe fix this later
@@ -731,14 +719,13 @@ class BootstrapInstaller {
         if (slashPos == -1) {
             // this is only a filename (no directory path included)
             name = path;
-        } else if (path.length() > slashPos+1) {
+        } else if (path.length() > slashPos + 1) {
             // split off the ending of the path
-            name = path.substring(slashPos+1);
+            name = path.substring(slashPos + 1);
         }
         if (isBlank(name)) {
             throw new IllegalArgumentException("Invalid path, no filename found: " + path);
         }
         return name;
     }
-
 }
