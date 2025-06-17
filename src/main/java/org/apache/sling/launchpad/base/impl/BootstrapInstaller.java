@@ -446,7 +446,7 @@ class BootstrapInstaller {
 
         // check for an installed Bundle with the symbolic name
         Bundle installedBundle = currentBundles.get(symbolicName);
-        if (ignore(installedBundle, manifest)) {
+        if (ignore(installedBundle, startLevel, manifest)) {
             logger.log(Logger.LOG_INFO, "Ignoring " + bundleJar + ": More recent version already installed");
             return false; // SHORT CIRCUIT
         }
@@ -602,10 +602,16 @@ class BootstrapInstaller {
      * @return <code>true</code> if the manifest does not describe a bundle with
      *         a higher version number.
      */
-    private boolean ignore(final Bundle installedBundle, final Manifest manifest) {
+    private boolean ignore(final Bundle installedBundle, int startLevel, final Manifest manifest) {
 
         // the bundle is not installed yet, so we have to install it
         if (installedBundle == null) {
+            return false;
+        }
+
+        int installedBundleStartLevel =
+                installedBundle.adapt(BundleStartLevel.class).getStartLevel();
+        if (startLevel != installedBundleStartLevel) {
             return false;
         }
 
