@@ -609,12 +609,6 @@ class BootstrapInstaller {
             return false;
         }
 
-        int installedBundleStartLevel =
-                installedBundle.adapt(BundleStartLevel.class).getStartLevel();
-        if (startLevel != installedBundleStartLevel) {
-            return false;
-        }
-
         String versionProp = manifest.getMainAttributes().getValue(Constants.BUNDLE_VERSION);
         Version newVersion = Version.parseVersion(versionProp);
 
@@ -628,6 +622,14 @@ class BootstrapInstaller {
                 && isNewerSnapshot(installedBundle, manifest)) {
             logger.log(Logger.LOG_INFO, "Forcing upgrade of SNAPSHOT bundle: " + installedBundle.getSymbolicName());
             return false;
+        }
+
+        if (newVersion.compareTo(installedVersion) == 0) {
+            int installedBundleStartLevel =
+                    installedBundle.adapt(BundleStartLevel.class).getStartLevel();
+            if (startLevel != installedBundleStartLevel) {
+                return false;
+            }
         }
 
         return newVersion.compareTo(installedVersion) <= 0;
