@@ -624,7 +624,7 @@ class BootstrapInstaller {
             return false;
         }
 
-        if (newVersion.compareTo(installedVersion) == 0) {
+        if (newVersion.equals(installedVersion)) {
             int installedBundleStartLevel =
                     installedBundle.adapt(BundleStartLevel.class).getStartLevel();
             if (startLevel != installedBundleStartLevel) {
