@@ -202,15 +202,18 @@ public class BootstrapInstallerTest {
     }
 
     @Test
-    public void testIgnoreSameVersionSameStartLevel() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void testIgnoreSameVersionSameStartLevel()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         // prepare for invoking the installBundle method
         BundleContext mockBundleContext = mock(BundleContext.class);
         Logger mockLogger = mock(Logger.class);
         LaunchpadContentProvider mockLaunchpadContentProvider = mock(LaunchpadContentProvider.class);
-        BootstrapInstaller bsi = new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
+        BootstrapInstaller bsi =
+                new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
 
-        Method ignoreMethod = BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
+        Method ignoreMethod =
+                BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
         ignoreMethod.setAccessible(true);
 
         // prepare already installed bundle
@@ -234,15 +237,18 @@ public class BootstrapInstallerTest {
     }
 
     @Test
-    public void testIgnoreSnapshotVersion() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void testIgnoreSnapshotVersion()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         // prepare for invoking the installBundle method
         BundleContext mockBundleContext = mock(BundleContext.class);
         Logger mockLogger = mock(Logger.class);
         LaunchpadContentProvider mockLaunchpadContentProvider = mock(LaunchpadContentProvider.class);
-        BootstrapInstaller bsi = new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
+        BootstrapInstaller bsi =
+                new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
 
-        Method ignoreMethod = BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
+        Method ignoreMethod =
+                BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
         ignoreMethod.setAccessible(true);
 
         // prepare already installed bundle
@@ -266,15 +272,18 @@ public class BootstrapInstallerTest {
     }
 
     @Test
-    public void testIgnoreDifferentStartLevel() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void testIgnoreDifferentStartLevel()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         // prepare for invoking the installBundle method
         BundleContext mockBundleContext = mock(BundleContext.class);
         Logger mockLogger = mock(Logger.class);
         LaunchpadContentProvider mockLaunchpadContentProvider = mock(LaunchpadContentProvider.class);
-        BootstrapInstaller bsi = new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
+        BootstrapInstaller bsi =
+                new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
 
-        Method ignoreMethod = BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
+        Method ignoreMethod =
+                BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
         ignoreMethod.setAccessible(true);
 
         // prepare already installed bundle
@@ -298,15 +307,18 @@ public class BootstrapInstallerTest {
     }
 
     @Test
-    public void testIgnoreNewBundleHigherVersion() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void testIgnoreNewBundleHigherVersion()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         // prepare for invoking the installBundle method
         BundleContext mockBundleContext = mock(BundleContext.class);
         Logger mockLogger = mock(Logger.class);
         LaunchpadContentProvider mockLaunchpadContentProvider = mock(LaunchpadContentProvider.class);
-        BootstrapInstaller bsi = new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
+        BootstrapInstaller bsi =
+                new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
 
-        Method ignoreMethod = BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
+        Method ignoreMethod =
+                BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
         ignoreMethod.setAccessible(true);
 
         // prepare already installed bundle
@@ -330,15 +342,18 @@ public class BootstrapInstallerTest {
     }
 
     @Test
-    public void testIgnoreNewBundleLowerVersion() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void testIgnoreNewBundleLowerVersion()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         // prepare for invoking the installBundle method
         BundleContext mockBundleContext = mock(BundleContext.class);
         Logger mockLogger = mock(Logger.class);
         LaunchpadContentProvider mockLaunchpadContentProvider = mock(LaunchpadContentProvider.class);
-        BootstrapInstaller bsi = new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
+        BootstrapInstaller bsi =
+                new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
 
-        Method ignoreMethod = BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
+        Method ignoreMethod =
+                BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
         ignoreMethod.setAccessible(true);
 
         // prepare already installed bundle
@@ -362,15 +377,18 @@ public class BootstrapInstallerTest {
     }
 
     @Test
-    public void testIgnoreNewBundleInstallation() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void testIgnoreNewBundleInstallation()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         // prepare for invoking the installBundle method
         BundleContext mockBundleContext = mock(BundleContext.class);
         Logger mockLogger = mock(Logger.class);
         LaunchpadContentProvider mockLaunchpadContentProvider = mock(LaunchpadContentProvider.class);
-        BootstrapInstaller bsi = new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
+        BootstrapInstaller bsi =
+                new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
 
-        Method ignoreMethod = BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
+        Method ignoreMethod =
+                BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
         ignoreMethod.setAccessible(true);
 
         // new bundle to install
