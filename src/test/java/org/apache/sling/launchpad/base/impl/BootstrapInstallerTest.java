@@ -48,8 +48,6 @@ import static org.mockito.Mockito.when;
  */
 public class BootstrapInstallerTest {
 
-    public static final String TEST_RESOURCE_PATH = "holaworld-invalid.jar";
-
     /**
      * Test method for
      * {@link org.apache.sling.launchpad.base.impl.BootstrapInstaller#extractFileName(java.lang.String)}
