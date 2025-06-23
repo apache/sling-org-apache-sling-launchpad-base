@@ -23,10 +23,25 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
 
+import org.apache.felix.framework.Logger;
+import org.apache.sling.launchpad.api.LaunchpadContentProvider;
+import org.apache.sling.launchpad.api.StartupMode;
 import org.junit.Test;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.startlevel.BundleStartLevel;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Testing the bootstrap installer methods
@@ -182,6 +197,202 @@ public class BootstrapInstallerTest {
 
         assertFalse(BootstrapInstaller.isBlank("Test"));
         assertFalse(BootstrapInstaller.isBlank(" asdf "));
+    }
+
+    @Test
+    public void testIgnoreSameVersionSameStartLevel()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        // prepare for invoking the installBundle method
+        BundleContext mockBundleContext = mock(BundleContext.class);
+        Logger mockLogger = mock(Logger.class);
+        LaunchpadContentProvider mockLaunchpadContentProvider = mock(LaunchpadContentProvider.class);
+        BootstrapInstaller bsi =
+                new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
+
+        Method ignoreMethod =
+                BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
+        ignoreMethod.setAccessible(true);
+
+        // prepare already installed bundle
+        Bundle mockInstalledBundle = mock(Bundle.class);
+        Dictionary<String, String> headers = new Hashtable<>();
+        headers.put(Constants.BUNDLE_VERSION, "1.1.0");
+        when(mockInstalledBundle.getSymbolicName()).thenReturn("test.bundle");
+        when(mockInstalledBundle.getHeaders()).thenReturn(headers);
+
+        BundleStartLevel mockBundleStartLevel = mock(BundleStartLevel.class);
+        when(mockInstalledBundle.adapt(BundleStartLevel.class)).thenReturn(mockBundleStartLevel);
+        when(mockBundleStartLevel.getStartLevel()).thenReturn(1);
+
+        // new bundle to install
+        Attributes mockNewBundleAttributes = mock(Attributes.class);
+        when(mockNewBundleAttributes.getValue(Constants.BUNDLE_VERSION)).thenReturn("1.1.0");
+        Manifest mockNewBundleManifest = mock(Manifest.class);
+        when(mockNewBundleManifest.getMainAttributes()).thenReturn(mockNewBundleAttributes);
+
+        assertTrue((Boolean) ignoreMethod.invoke(bsi, mockInstalledBundle, 1, mockNewBundleManifest));
+    }
+
+    @Test
+    public void testIgnoreSnapshotVersion()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        // prepare for invoking the installBundle method
+        BundleContext mockBundleContext = mock(BundleContext.class);
+        Logger mockLogger = mock(Logger.class);
+        LaunchpadContentProvider mockLaunchpadContentProvider = mock(LaunchpadContentProvider.class);
+        BootstrapInstaller bsi =
+                new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
+
+        Method ignoreMethod =
+                BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
+        ignoreMethod.setAccessible(true);
+
+        // prepare already installed bundle
+        Bundle mockInstalledBundle = mock(Bundle.class);
+        Dictionary<String, String> headers = new Hashtable<>();
+        headers.put(Constants.BUNDLE_VERSION, "1.1.0");
+        when(mockInstalledBundle.getSymbolicName()).thenReturn("test.bundle");
+        when(mockInstalledBundle.getHeaders()).thenReturn(headers);
+
+        BundleStartLevel mockBundleStartLevel = mock(BundleStartLevel.class);
+        when(mockInstalledBundle.adapt(BundleStartLevel.class)).thenReturn(mockBundleStartLevel);
+        when(mockBundleStartLevel.getStartLevel()).thenReturn(1);
+
+        // new bundle to install
+        Attributes mockNewBundleAttributes = mock(Attributes.class);
+        when(mockNewBundleAttributes.getValue(Constants.BUNDLE_VERSION)).thenReturn("1.1.0.SNAPSHOT");
+        Manifest mockNewBundleManifest = mock(Manifest.class);
+        when(mockNewBundleManifest.getMainAttributes()).thenReturn(mockNewBundleAttributes);
+
+        assertFalse((Boolean) ignoreMethod.invoke(bsi, mockInstalledBundle, 1, mockNewBundleManifest));
+    }
+
+    @Test
+    public void testIgnoreDifferentStartLevel()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        // prepare for invoking the installBundle method
+        BundleContext mockBundleContext = mock(BundleContext.class);
+        Logger mockLogger = mock(Logger.class);
+        LaunchpadContentProvider mockLaunchpadContentProvider = mock(LaunchpadContentProvider.class);
+        BootstrapInstaller bsi =
+                new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
+
+        Method ignoreMethod =
+                BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
+        ignoreMethod.setAccessible(true);
+
+        // prepare already installed bundle
+        Bundle mockInstalledBundle = mock(Bundle.class);
+        Dictionary<String, String> headers = new Hashtable<>();
+        headers.put(Constants.BUNDLE_VERSION, "1.1.0");
+        when(mockInstalledBundle.getSymbolicName()).thenReturn("test.bundle");
+        when(mockInstalledBundle.getHeaders()).thenReturn(headers);
+
+        BundleStartLevel mockBundleStartLevel = mock(BundleStartLevel.class);
+        when(mockInstalledBundle.adapt(BundleStartLevel.class)).thenReturn(mockBundleStartLevel);
+        when(mockBundleStartLevel.getStartLevel()).thenReturn(20);
+
+        // new bundle to install
+        Attributes mockNewBundleAttributes = mock(Attributes.class);
+        when(mockNewBundleAttributes.getValue(Constants.BUNDLE_VERSION)).thenReturn("1.1.0");
+        Manifest mockNewBundleManifest = mock(Manifest.class);
+        when(mockNewBundleManifest.getMainAttributes()).thenReturn(mockNewBundleAttributes);
+
+        assertFalse((Boolean) ignoreMethod.invoke(bsi, mockInstalledBundle, 1, mockNewBundleManifest));
+    }
+
+    @Test
+    public void testIgnoreNewBundleHigherVersion()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        // prepare for invoking the installBundle method
+        BundleContext mockBundleContext = mock(BundleContext.class);
+        Logger mockLogger = mock(Logger.class);
+        LaunchpadContentProvider mockLaunchpadContentProvider = mock(LaunchpadContentProvider.class);
+        BootstrapInstaller bsi =
+                new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
+
+        Method ignoreMethod =
+                BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
+        ignoreMethod.setAccessible(true);
+
+        // prepare already installed bundle
+        Bundle mockInstalledBundle = mock(Bundle.class);
+        Dictionary<String, String> headers = new Hashtable<>();
+        headers.put(Constants.BUNDLE_VERSION, "1.1.0");
+        when(mockInstalledBundle.getSymbolicName()).thenReturn("test.bundle");
+        when(mockInstalledBundle.getHeaders()).thenReturn(headers);
+
+        BundleStartLevel mockBundleStartLevel = mock(BundleStartLevel.class);
+        when(mockInstalledBundle.adapt(BundleStartLevel.class)).thenReturn(mockBundleStartLevel);
+        when(mockBundleStartLevel.getStartLevel()).thenReturn(1);
+
+        // new bundle to install
+        Attributes mockNewBundleAttributes = mock(Attributes.class);
+        when(mockNewBundleAttributes.getValue(Constants.BUNDLE_VERSION)).thenReturn("1.2.0");
+        Manifest mockNewBundleManifest = mock(Manifest.class);
+        when(mockNewBundleManifest.getMainAttributes()).thenReturn(mockNewBundleAttributes);
+
+        assertFalse((Boolean) ignoreMethod.invoke(bsi, mockInstalledBundle, 1, mockNewBundleManifest));
+    }
+
+    @Test
+    public void testIgnoreNewBundleLowerVersion()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        // prepare for invoking the installBundle method
+        BundleContext mockBundleContext = mock(BundleContext.class);
+        Logger mockLogger = mock(Logger.class);
+        LaunchpadContentProvider mockLaunchpadContentProvider = mock(LaunchpadContentProvider.class);
+        BootstrapInstaller bsi =
+                new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
+
+        Method ignoreMethod =
+                BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
+        ignoreMethod.setAccessible(true);
+
+        // prepare already installed bundle
+        Bundle mockInstalledBundle = mock(Bundle.class);
+        Dictionary<String, String> headers = new Hashtable<>();
+        headers.put(Constants.BUNDLE_VERSION, "1.1.0");
+        when(mockInstalledBundle.getSymbolicName()).thenReturn("test.bundle");
+        when(mockInstalledBundle.getHeaders()).thenReturn(headers);
+
+        BundleStartLevel mockBundleStartLevel = mock(BundleStartLevel.class);
+        when(mockInstalledBundle.adapt(BundleStartLevel.class)).thenReturn(mockBundleStartLevel);
+        when(mockBundleStartLevel.getStartLevel()).thenReturn(1);
+
+        // new bundle to install
+        Attributes mockNewBundleAttributes = mock(Attributes.class);
+        when(mockNewBundleAttributes.getValue(Constants.BUNDLE_VERSION)).thenReturn("1.0.0");
+        Manifest mockNewBundleManifest = mock(Manifest.class);
+        when(mockNewBundleManifest.getMainAttributes()).thenReturn(mockNewBundleAttributes);
+
+        assertTrue((Boolean) ignoreMethod.invoke(bsi, mockInstalledBundle, 1, mockNewBundleManifest));
+    }
+
+    @Test
+    public void testIgnoreNewBundleInstallation()
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+        // prepare for invoking the installBundle method
+        BundleContext mockBundleContext = mock(BundleContext.class);
+        Logger mockLogger = mock(Logger.class);
+        LaunchpadContentProvider mockLaunchpadContentProvider = mock(LaunchpadContentProvider.class);
+        BootstrapInstaller bsi =
+                new BootstrapInstaller(mockBundleContext, mockLogger, mockLaunchpadContentProvider, StartupMode.UPDATE);
+
+        Method ignoreMethod =
+                BootstrapInstaller.class.getDeclaredMethod("ignore", Bundle.class, int.class, Manifest.class);
+        ignoreMethod.setAccessible(true);
+
+        // new bundle to install
+        Manifest mockNewBundleManifest = mock(Manifest.class);
+
+        assertFalse((Boolean) ignoreMethod.invoke(bsi, null, 1, mockNewBundleManifest));
     }
 
     // TODO eventually add in tests that create a context so we can test more
